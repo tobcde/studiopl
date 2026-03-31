@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio PL — Reservá tu clase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #f5f0eb; --dark: #1a1a1a; --gold: #c9a96e; --gold-light: #e8d5b0;
+      --muted: #888; --border: #e2d9ce; --white: #ffffff;
+      --success: #5a8a6a; --error: #c0392b;
+    }
+    body { font-family: 'Montserrat', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
+    header { background: var(--dark); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 72px; position: sticky; top: 0; z-index: 100; }
+    .logo-name { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--gold-light); letter-spacing: 6px; line-height: 1; }
+    .logo-sub { font-size: 9px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-top: 3px; }
+    .hdr-btn { background: none; border: 1px solid var(--gold); color: var(--gold-light); padding: 8px 20px; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all .2s; white-space: nowrap; }
+    .hdr-btn:hover { background: var(--gold); color: var(--dark); }
+    .hdr-btn.solid { background: var(--gold); border-color: var(--gold); color: var(--dark); }
+    .hdr-btn.solid:hover { background: var(--gold-light); }
+    #btn-logout { background: none; border: none; color: var(--muted); font-size: 10px; letter-spacing: 1px; cursor: pointer; text-decoration: underline; font-family: 'Montserrat', sans-serif; white-space: nowrap; }
+    #user-name { color: var(--gold-light); font-size: 12px; letter-spacing: 1px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* Menú desplegable mobile */
+    #user-menu { position: relative; }
+    #user-menu-btn { background: none; border: 1px solid var(--gold); color: var(--gold-light); padding: 7px 12px; font-size: 18px; cursor: pointer; line-height: 1; display: none; }
+    #user-menu-panel { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--dark); border: 1px solid var(--border); min-width: 180px; z-index: 500; flex-direction: column; }
+    #user-menu-panel.open { display: flex; }
+    #user-menu-panel button, #user-menu-panel a { background: none; border: none; border-bottom: 1px solid var(--border); color: var(--gold-light); padding: 14px 18px; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; font-family: 'Montserrat', sans-serif; text-align: left; text-decoration: none; display: block; transition: background .15s; }
+    #user-menu-panel button:hover, #user-menu-panel a:hover { background: rgba(201,169,110,0.1); }
+    #user-menu-panel button:last-child { border-bottom: none; color: var(--muted); }
+    .hero { padding: 60px 48px 40px; max-width: 1200px; margin: 0 auto; }
+    .hero-eyebrow { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(42px, 6vw, 72px); font-weight: 300; line-height: 1.1; margin-bottom: 20px; }
+    .hero h1 em { font-style: italic; color: var(--gold); }
+    .hero p { color: var(--muted); font-size: 14px; max-width: 400px; line-height: 1.8; }
+    .filters { max-width: 1200px; margin: 0 auto; padding: 0 48px 24px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-btn { background: var(--white); border: 1px solid var(--border); color: var(--muted); padding: 8px 18px; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all .2s; }
+    .filter-btn.active, .filter-btn:hover { background: var(--dark); border-color: var(--dark); color: var(--gold-light); }
+    .clases-grid { max-width: 1200px; margin: 0 auto; padding: 0 48px 80px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .clase-card { background: var(--white); border: 1px solid var(--border); padding: 22px 24px 20px; transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden; }
+    .clase-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--gold); transform: scaleY(0); transition: transform .2s; }
+    .clase-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.08); }
+    .clase-card:hover::before { transform: scaleY(1); }
+    .clase-dia { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+    .clase-hora { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 300; line-height: 1; margin-bottom: 6px; }
+    .clase-instructor { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+    .clase-desc { font-size: 12px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; font-style: italic; }
+    .fecha-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 6px; }
+    .fecha-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .fecha-tab { background: var(--cream); border: 1px solid var(--border); padding: 5px 10px; font-size: 10px; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all .15s; }
+    .fecha-tab.selected { background: var(--dark); border-color: var(--dark); color: var(--gold-light); }
+    .fecha-tab.post-venc { border-color: #c09060; color: #c09060; }
+    .fecha-tab.post-venc.selected { background: #c09060; border-color: #c09060; color: var(--white); }
+    .cupos-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .cupos-track { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .cupos-fill { height: 100%; background: var(--gold); transition: width .3s; }
+    .cupos-fill.lleno { background: #d4816b; }
+    .cupos-text { font-size: 10px; letter-spacing: 1px; color: var(--muted); white-space: nowrap; }
+    .btn-reservar { width: 100%; background: var(--dark); color: var(--gold-light); border: none; padding: 13px; font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all .2s; }
+    .btn-reservar:hover { background: var(--gold); color: var(--dark); }
+    .btn-reservar.espera { background: none; border: 1px solid var(--muted); color: var(--muted); }
+    .btn-reservar.espera:hover { border-color: var(--gold); color: var(--gold); }
+    .loading { display: flex; justify-content: center; padding: 60px; grid-column: 1/-1; }
+    .spinner { width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state { text-align: center; padding: 80px 40px; color: var(--muted); grid-column: 1/-1; }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; opacity: .4; }
+    /* MODALES */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px; opacity: 0; visibility: hidden; transition: opacity .25s; }
+    .modal-overlay.open { opacity: 1; visibility: visible; }
+    .modal { background: var(--white); max-width: 440px; width: 100%; padding: 40px; transform: translateY(20px); transition: transform .25s; }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; }
+    .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 300; }
+    .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--muted); }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .form-group input { width: 100%; border: 1px solid var(--border); padding: 12px 16px; font-size: 14px; font-family: 'Montserrat', sans-serif; background: var(--cream); color: var(--dark); outline: none; transition: border-color .2s; }
+    .form-group input:focus { border-color: var(--gold); }
+    .btn-primary { width: 100%; background: var(--dark); color: var(--gold-light); border: none; padding: 15px; font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: background .2s; margin-top: 8px; }
+    .btn-primary:hover { background: var(--gold); color: var(--dark); }
+    .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+    .btn-secondary { width: 100%; background: none; border: 1px solid var(--border); color: var(--muted); padding: 12px; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all .2s; margin-top: 10px; }
+    .btn-secondary:hover { border-color: var(--dark); color: var(--dark); }
+    .msg { padding: 12px 16px; font-size: 12px; margin-bottom: 16px; letter-spacing: .5px; }
+    .msg.success { background: #eaf3ec; color: var(--success); border: 1px solid #b8d8bf; }
+    .msg.error { background: #fdf0ee; color: var(--error); border: 1px solid #f0c0b8; }
+    .reserva-item { border: 1px solid var(--border); padding: 18px 20px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .reserva-info .r-fecha { font-size: 11px; color: var(--gold); letter-spacing: 1px; margin-bottom: 4px; }
+    .reserva-info .r-clase { font-size: 15px; color: var(--dark); }
+    .reserva-info .r-inst { font-size: 11px; color: var(--muted); }
+    .btn-cancelar { background: none; border: 1px solid #d0c0b8; color: #c09080; padding: 7px 14px; font-size: 10px; letter-spacing: 1px; cursor: pointer; font-family: 'Montserrat', sans-serif; transition: all .2s; white-space: nowrap; }
+    .btn-cancelar:hover { border-color: var(--error); color: var(--error); }
+    /* CALENDARIO MIS RESERVAS */
+    .cal-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:2px; }
+    .cal-dia-header { text-align:center;font-size:8px;letter-spacing:1px;color:var(--muted);padding:2px 0;text-transform:uppercase; }
+    .cal-dia { width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:11px;border-radius:50%;cursor:default;position:relative;margin:0 auto; }
+    .cal-dia.vacio { background:none; }
+    .cal-dia.normal { color:var(--muted); }
+    .cal-dia.hoy { border:1px solid var(--gold);color:var(--dark);font-weight:600; }
+    .cal-dia.reservado { background:var(--dark);color:var(--gold-light);font-weight:600;cursor:pointer; }
+    .cal-dia.reservado:hover { background:var(--gold);color:var(--dark); }
+    .cal-dia.pasado { opacity:.35; }
+
+    /* ── TABLET: 2 columnas ── */
+    @media (max-width: 900px) {
+      .clases-grid { grid-template-columns: repeat(2, 1fr); padding: 0 24px 60px; gap: 16px; }
+      .hero { padding: 44px 24px 30px; }
+      .filters { padding: 0 24px 20px; }
+    }
+
+    /* ── MOBILE: 1 columna ── */
+    @media (max-width: 640px) {
+      /* Header */
+      header { padding: 0 16px; height: 60px; }
+      .logo-name { font-size: 16px; letter-spacing: 3px; }
+      .logo-sub { display: none; }
+      /* Ocultar botones desktop, mostrar hamburguesa */
+      .hdr-desktop { display: none !important; }
+      #user-menu-btn { display: block; }
+      #user-name { font-size: 11px; max-width: 90px; }
+      /* Auth out en mobile */
+      #auth-out .hdr-btn { padding: 7px 12px; font-size: 9px; letter-spacing: 1px; }
+
+      /* Hero */
+      .hero { padding: 28px 16px 20px; }
+      .hero-eyebrow { font-size: 9px; }
+      .hero h1 { font-size: 32px; }
+      .hero p { font-size: 13px; }
+
+      /* Filtros scrolleables */
+      .filters {
+        padding: 0 16px 20px;
+        gap: 6px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .filters::-webkit-scrollbar { display: none; }
+      .filter-btn {
+        flex-shrink: 0;
+        padding: 7px 14px;
+        font-size: 9px;
+      }
+
+      /* Grid de clases 1 columna */
+      .clases-grid {
+        grid-template-columns: 1fr;
+        padding: 0 16px 60px;
+        gap: 14px;
+      }
+
+      /* Modales bottom sheet */
+      .modal-overlay { padding: 0; align-items: flex-end; }
+      .modal {
+        max-width: 100%;
+        width: 100%;
+        max-height: 92vh;
+        overflow-y: auto;
+        border-radius: 12px 12px 0 0;
+        padding: 20px 16px 32px;
+      }
+      .modal::before {
+        content: '';
+        display: block;
+        width: 36px; height: 4px;
+        background: #ddd;
+        border-radius: 2px;
+        margin: 0 auto 16px;
+      }
+      /* Formulario registro (PAR-Q) */
+      .modal[style*="560px"], .modal[style*="520px"] {
+        max-height: 96vh;
+        padding: 16px 14px 40px;
+      }
+      .modal-title { font-size: 22px; }
+
+      /* Inputs 16px para evitar zoom en iOS */
+      .form-group input,
+      .form-group select { font-size: 16px !important; padding: 12px 14px; }
+      input[type="email"],
+      input[type="text"],
+      input[type="password"],
+      input[type="tel"],
+      input[type="number"],
+      input[type="date"] { font-size: 16px !important; }
+
+      /* PAR-Q form */
+      .yn-group { gap: 24px; }
+      .yn-opt { font-size: 14px; }
+      .yn-opt input[type=radio] { width: 18px; height: 18px; }
+      .check-opt { font-size: 13px; padding: 6px 0; }
+      .check-opt input[type=checkbox] { width: 18px; height: 18px; }
+
+      /* Botones primarios mas grandes */
+      .btn-primary { padding: 16px; font-size: 12px; }
+      .btn-secondary { padding: 13px; font-size: 11px; }
+
+      /* Mis reservas */
+      .reserva-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .btn-cancelar { width: 100%; text-align: center; padding: 10px; }
+      /* Grid 1 columna */
+      .clases-grid { grid-template-columns: 1fr; padding: 0 16px 50px; gap: 14px; }
+    }
+
+    /* Pantallas muy chicas */
+    @media (max-width: 380px) {
+      .hero h1 { font-size: 30px; }
+      .clases-grid { padding: 0 12px 60px; }
+      header { padding: 0 12px; }
+    }
+    /* BANNER CRÉDITOS */
+    #creditos-banner { display:none; align-items:center; justify-content:space-between; background:var(--dark); border-bottom:1px solid rgba(201,169,110,0.2); padding:10px 40px; font-size:11px; letter-spacing:1px; }
+    .cr-plan { color:var(--muted); text-transform:uppercase; letter-spacing:2px; }
+    .cr-val { color:var(--gold); font-weight:500; }
+    @media(max-width:640px){ #creditos-banner { padding:10px 20px; } }
+    /* PAR-Q FORM */
+    .par-q-item { border-bottom:1px solid var(--border); padding:14px 0; margin-bottom:0; }
+    .par-q-item label { display:block; font-size:12px; color:var(--dark); line-height:1.5; margin-bottom:10px; letter-spacing:0; text-transform:none; }
+    .yn-group { display:flex; gap:20px; }
+    .yn-opt { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--dark); cursor:pointer; font-weight:400; text-transform:none; letter-spacing:0; }
+    .yn-opt input[type=radio] { accent-color:var(--gold); width:14px; height:14px; }
+    .check-group { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+    .check-opt { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--dark); cursor:pointer; font-weight:400; text-transform:none; letter-spacing:0; }
+    .check-opt input[type=checkbox] { accent-color:var(--gold); width:14px; height:14px; flex-shrink:0; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:14px">
+    <img src="data:image/jpeg;base64,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" alt="Studio PL" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:1px solid rgba(201,169,110,0.3)"/>
+    <div>
+      <div class="logo-name">STUDIO PL</div>
+      <div class="logo-sub">Studio de Pilates</div>
+    </div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <div id="auth-out" style="display:flex;gap:10px">
+      <button class="hdr-btn" onclick="abrirModal('modal-login')">Ingresar</button>
+      <button class="hdr-btn solid" onclick="abrirModal('modal-registro')">Registrarse</button>
+    </div>
+    <div id="auth-in" style="display:none;align-items:center;gap:12px">
+      <span id="user-name"></span>
+      <!-- Botones desktop -->
+      <button class="hdr-btn hdr-desktop" onclick="abrirMisReservas()">Mis reservas</button>
+      <button class="hdr-btn hdr-desktop" onclick="abrirMisDatos()">Mis datos</button>
+      <button class="hdr-btn hdr-desktop" onclick="abrirModal('modal-password')" title="Cambiar contraseña">🔑</button>
+      <button id="btn-logout" class="hdr-desktop" onclick="logout()">Salir</button>
+      <!-- Menú mobile -->
+      <div id="user-menu">
+        <button id="user-menu-btn" onclick="toggleUserMenu()">☰</button>
+        <div id="user-menu-panel">
+          <button onclick="closeUserMenu();abrirMisReservas()">📅 Mis reservas</button>
+          <button onclick="closeUserMenu();abrirMisDatos()">👤 Mis datos</button>
+          <button onclick="closeUserMenu();abrirModal('modal-password')">🔑 Contraseña</button>
+          <button onclick="closeUserMenu();logout()">Salir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- BANNER CRÉDITOS (visible solo cuando hay sesión y tiene abono) -->
+<div id="creditos-banner">
+  <span class="cr-plan">Cargando plan...</span>
+  <span class="cr-val"></span>
+</div>
+
+<section class="hero">
+  <p class="hero-eyebrow">Reservá tu lugar</p>
+  <h1>Encontrá <em>tu clase</em><br>perfecta</h1>
+  <p>Elegí el horario que mejor se adapte a tu rutina y reservá tu lugar en pocos pasos.</p>
+</section>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filtrar('todos',this)">Todos</button>
+  <button class="filter-btn" onclick="filtrar('Lunes',this)">Lunes</button>
+  <button class="filter-btn" onclick="filtrar('Martes',this)">Martes</button>
+  <button class="filter-btn" onclick="filtrar('Miércoles',this)">Miércoles</button>
+  <button class="filter-btn" onclick="filtrar('Jueves',this)">Jueves</button>
+  <button class="filter-btn" onclick="filtrar('Viernes',this)">Viernes</button>
+  <button class="filter-btn" onclick="filtrar('Sábado',this)">Sábado</button>
+</div>
+
+<main class="clases-grid" id="clases-grid">
+  <div class="loading"><div class="spinner"></div></div>
+</main>
+
+<!-- MODAL LOGIN -->
+<div class="modal-overlay" id="modal-login">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Ingresar</h2>
+      <button class="modal-close" onclick="cerrarModal('modal-login')">✕</button>
+    </div>
+
+    <!-- Paso 1: DNI -->
+    <div id="login-s1">
+      <div id="login-msg"></div>
+      <div class="form-group">
+        <label>DNI</label>
+        <input type="text" id="login-dni" placeholder="Sin puntos ni espacios" inputmode="numeric"
+          onkeydown="if(event.key==='Enter')checkLoginMethod()">
+      </div>
+      <button class="btn-primary" onclick="checkLoginMethod()">Continuar</button>
+    </div>
+
+    <!-- Paso 2a: contraseña -->
+    <div id="login-s2a" style="display:none">
+      <div id="login-msg2a"></div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Ingresá tu contraseña.</p>
+      <div class="form-group" style="position:relative">
+        <label>Contraseña</label>
+        <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLoginConPassword()">
+        <button onclick="togglePass('login-password')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
+      </div>
+      <button class="btn-primary" onclick="doLoginConPassword()">Ingresar</button>
+      <button class="btn-secondary" style="margin-top:10px" onclick="usarCodigo()">Prefiero usar código por email</button>
+      <button class="btn-secondary" style="margin-top:8px;color:var(--gold);border-color:transparent" onclick="olvideMiPassword()">Olvidé mi contraseña</button>
+    </div>
+
+    <!-- Paso 2b: código -->
+    <div id="login-s2b" style="display:none">
+      <div id="login-msg2b"></div>
+      <p id="login-email-hint" style="font-size:13px;color:var(--muted);margin-bottom:20px">Enviamos un código de 6 dígitos a tu email.</p>
+      <div class="form-group">
+        <label>Código</label>
+        <input type="text" id="login-codigo" placeholder="000000" maxlength="6"
+          style="letter-spacing:6px;font-size:20px;text-align:center"
+          onkeydown="if(event.key==='Enter')verificarCodigo()">
+      </div>
+      <button class="btn-primary" onclick="verificarCodigo()">Ingresar</button>
+      <button class="btn-secondary" onclick="volverLoginDni()">Volver</button>
+    </div>
+
+    <!-- Paso 3: reset enviado -->
+    <div id="login-s3" style="display:none;text-align:center;padding:10px 0">
+      <div style="font-size:32px;margin-bottom:12px">📧</div>
+      <p style="font-size:14px;color:var(--dark);margin-bottom:8px">Te enviamos un link para resetear tu contraseña.</p>
+      <p style="font-size:12px;color:var(--muted)">Revisá tu email y seguí las instrucciones.</p>
+      <button class="btn-secondary" style="margin-top:20px" onclick="volverLoginDni()">Volver</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MIS DATOS -->
+<div class="modal-overlay" id="modal-mis-datos">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Mis datos</h2>
+      <button class="modal-close" onclick="cerrarModal('modal-mis-datos')">✕</button>
+    </div>
+    <div id="mis-datos-msg"></div>
+
+    <div style="background:#f9f6f2;border:1px solid var(--border);padding:12px 16px;margin-bottom:20px;font-size:11px;color:var(--muted);line-height:1.6">
+      Tu <strong>DNI</strong> es tu identificador único y no se puede modificar.<br>
+      Podés actualizar tu nombre, email, teléfono y fecha de nacimiento.
+    </div>
+
+    <div class="form-group">
+      <label>DNI</label>
+      <input type="text" id="md-dni" disabled style="opacity:0.5;cursor:not-allowed">
+    </div>
+    <div class="form-group">
+      <label>Nombre completo</label>
+      <input type="text" id="md-nombre" placeholder="Tu nombre">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="md-email" placeholder="tu@email.com">
+      <small style="color:var(--muted);font-size:10px;margin-top:4px;display:block">Usamos este email para enviarte códigos de acceso y confirmaciones.</small>
+    </div>
+    <div class="form-group">
+      <label>Teléfono</label>
+      <input type="tel" id="md-telefono" placeholder="Ej: 1155667788">
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px">
+      <button class="btn-primary" onclick="guardarMisDatos()">Guardar cambios</button>
+      <button class="btn-secondary" onclick="cerrarModal('modal-mis-datos')">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CAMBIAR CONTRASEÑA -->
+<div class="modal-overlay" id="modal-password">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Mi contraseña</h2>
+      <button class="modal-close" onclick="cerrarModal('modal-password')">✕</button>
+    </div>
+    <div id="pass-msg"></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">
+      Configurá una contraseña para ingresar más rápido sin necesitar el código por email.
+    </p>
+    <div class="form-group" style="position:relative">
+      <label>Nueva contraseña</label>
+      <input type="password" id="pass-nueva" placeholder="Mínimo 6 caracteres">
+      <button onclick="togglePass('pass-nueva')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
+    </div>
+    <div class="form-group" style="position:relative">
+      <label>Confirmar contraseña</label>
+      <input type="password" id="pass-confirmar" placeholder="Repetí la contraseña">
+      <button onclick="togglePass('pass-confirmar')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
+    </div>
+    <button class="btn-primary" onclick="guardarPassword()">Guardar contraseña</button>
+    <button class="btn-secondary" style="margin-top:10px" onclick="cerrarModal('modal-password')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL REGISTRO PAR-Q -->
+<div class="modal-overlay" id="modal-registro">
+  <div class="modal" style="max-width:560px;max-height:90vh;overflow-y:auto;padding:32px 36px">
+    <div class="modal-header" style="position:sticky;top:0;background:var(--white);z-index:1;padding-bottom:16px;margin-bottom:0">
+      <div>
+        <h2 class="modal-title">Crear cuenta</h2>
+        <p style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:4px">FICHA DE INSCRIPCIÓN · STUDIO PL</p>
+      </div>
+      <button class="modal-close" onclick="cerrarModal('modal-registro')">✕</button>
+    </div>
+
+    <div id="reg-msg"></div>
+
+    <!-- PASO 1: DATOS PERSONALES -->
+    <div id="reg-step1">
+      <p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:20px 0 16px">Datos personales</p>
+
+      <div class="form-group"><label>Nombre y Apellido *</label><input type="text" id="reg-nombre" placeholder="Tu nombre completo"></div>
+      <div class="form-group"><label>DNI *</label><input type="text" id="reg-dni" placeholder="Sin puntos ni espacios" inputmode="numeric" style="letter-spacing:2px"></div>
+      <div class="form-group"><label>Email *</label><input type="email" id="reg-email" placeholder="tu@email.com"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+        <div class="form-group"><label>Teléfono *</label><input type="tel" id="reg-tel" placeholder="+54 11 ..."></div>
+        <div class="form-group"><label>Edad *</label><input type="number" id="reg-edad" placeholder="Ej: 28" min="10" max="99"></div>
+      </div>
+      <div class="form-group"><label>Fecha de nacimiento *</label><input type="date" id="reg-fnac"></div>
+
+      <p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:24px 0 12px">Cuestionario PAR-Q</p>
+      <div style="background:var(--cream);border-left:3px solid var(--border);padding:14px 18px;font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px">
+        Responder con honestidad. Si respondés <strong>SÍ</strong> a alguna pregunta, debés consultar a un médico antes de comenzar.
+      </div>
+
+      <!-- Patologías -->
+      <div class="form-group">
+        <label>¿Padece alguna patología?</label>
+        <div class="check-group">
+          <label class="check-opt"><input type="checkbox" name="patologia" value="Diabetes"> Diabetes</label>
+          <label class="check-opt"><input type="checkbox" name="patologia" value="Hipertensión"> Hipertensión</label>
+          <label class="check-opt"><input type="checkbox" name="patologia" value="Otra"><input type="text" id="patologia-otra" placeholder="Especificar..." style="margin-left:6px;border:none;border-bottom:1px solid var(--border);background:transparent;font-size:12px;width:140px;outline:none"></label>
+        </div>
+      </div>
+
+      <!-- PAR-Q Sí/No -->
+      <div class="par-q-item"><label>¿Alguna vez un médico le indicó que tiene un problema cardíaco y que solo debe realizar actividad física recomendada por un profesional? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq1" value="Sí" required> Sí</label><label class="yn-opt"><input type="radio" name="parq1" value="No"> No</label></div></div>
+      <div class="par-q-item"><label>¿Siente dolor en el pecho cuando realiza actividad física? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq2" value="Sí" required> Sí</label><label class="yn-opt"><input type="radio" name="parq2" value="No"> No</label></div></div>
+      <div class="par-q-item"><label>¿Ha sentido dolor en el pecho en reposo durante el último mes? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq3" value="Sí" required> Sí</label><label class="yn-opt"><input type="radio" name="parq3" value="No"> No</label></div></div>
+      <div class="par-q-item"><label>¿Ha perdido el equilibrio por mareos o ha perdido el conocimiento alguna vez? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq4" value="Sí" required> Sí</label><label class="yn-opt"><input type="radio" name="parq4" value="No"> No</label></div></div>
+      <div class="par-q-item"><label>¿Tiene algún problema óseo o articular que pueda empeorar con el ejercicio? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq5" value="Sí" required> Sí</label><label class="yn-opt"><input type="radio" name="parq5" value="No"> No</label></div></div>
+      <div class="form-group" style="margin-top:-4px"><label style="font-style:italic;font-size:10px">Si respondiste Sí arriba, ¿cuál o cuáles?</label><input type="text" id="parq5-cual" placeholder="Ej: columna, rodilla..."></div>
+      <div class="par-q-item"><label>¿Su médico le ha indicado tomar medicación para la presión arterial o para el corazón? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq6" value="Sí" required> Sí</label><label class="yn-opt"><input type="radio" name="parq6" value="No"> No</label></div></div>
+      <div class="form-group"><label>¿Sabe de alguna otra razón por la cual no debería realizar actividad física?</label><input type="text" id="parq-otra-razon" placeholder="Opcional..."></div>
+
+      <!-- Lesiones -->
+      <div class="form-group">
+        <label>¿Tuviste alguna lesión en los últimos 6 meses? *</label>
+        <div class="check-group">
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Contractura muscular"> Contractura muscular</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Desgarro"> Desgarro</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Lumbalgia"> Lumbalgia</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Hernia de disco"> Hernia de disco</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Cervicalgia"> Cervicalgia</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Tendinitis de hombro"> Tendinitis de hombro</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Manguito rotador"> Manguito rotador</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Fractura reciente"> Fractura reciente</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Cirugía reciente"> Cirugía reciente</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Ninguna" id="lesion-ninguna"> Ninguna</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Otra"><input type="text" id="lesion-otra" placeholder="Especificar..." style="margin-left:6px;border:none;border-bottom:1px solid var(--border);background:transparent;font-size:12px;width:140px;outline:none"></label>
+        </div>
+      </div>
+
+      <!-- Declaración -->
+      <div style="background:var(--cream);border:1px solid var(--border);padding:14px 18px;font-size:11px;color:var(--muted);line-height:1.7;margin:16px 0">
+        <strong style="color:var(--dark)">DECLARACIÓN</strong><br>
+        Declaro que la información proporcionada es verdadera y completa. Entiendo que si respondí SÍ a alguna pregunta, debo consultar con un médico antes de comenzar actividad física.
+      </div>
+      <label class="check-opt" style="margin-bottom:20px"><input type="checkbox" id="reg-acepta" required> Acepto la declaración y autorizo el uso de mis datos *</label>
+
+      <button class="btn-primary" onclick="registrarse()">Crear cuenta</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MIS RESERVAS -->
+<div class="modal-overlay" id="modal-mis-reservas">
+  <div class="modal" style="max-width:440px;padding:28px 28px 24px">
+    <div class="modal-header">
+      <h2 class="modal-title">Mis reservas</h2>
+      <button class="modal-close" onclick="cerrarModal('modal-mis-reservas')">✕</button>
+    </div>
+    <!-- Navegación del calendario -->
+    <div id="cal-nav" style="display:none;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <button onclick="calCambiarMes(-1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1">‹</button>
+      <span id="cal-titulo" style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--dark)"></span>
+      <button onclick="calCambiarMes(1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1">›</button>
+    </div>
+    <!-- Calendario -->
+    <div id="cal-grid" style="display:none;margin-bottom:14px"></div>
+    <!-- Lista de reservas -->
+    <div id="mis-reservas-content"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR -->
+<div class="modal-overlay" id="modal-confirmar">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title" id="conf-titulo">Confirmar reserva</h2>
+      <button class="modal-close" onclick="cerrarModal('modal-confirmar')">✕</button>
+    </div>
+    <div id="conf-msg"></div>
+    <div id="conf-detalle" style="background:var(--cream);padding:20px;margin-bottom:24px;border-left:3px solid var(--gold)"></div>
+    <button class="btn-primary" id="conf-btn" onclick="ejecutarAccion()">Confirmar</button>
+    <button class="btn-secondary" onclick="cerrarModal('modal-confirmar')">Cancelar</button>
+  </div>
+</div>
+
+<!-- MODAL RESET CONTRASEÑA (se abre cuando llega desde el link del email) -->
+<div class="modal-overlay" id="modal-reset">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Nueva contraseña</h2>
+    </div>
+    <div id="reset-msg"></div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:20px">Elegí una nueva contraseña para tu cuenta.</p>
+    <div class="form-group" style="position:relative">
+      <label>Nueva contraseña</label>
+      <input type="password" id="reset-pass1" placeholder="Mínimo 6 caracteres">
+      <button onclick="togglePass('reset-pass1')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
+    </div>
+    <div class="form-group" style="position:relative">
+      <label>Confirmar contraseña</label>
+      <input type="password" id="reset-pass2" placeholder="Repetí la contraseña">
+      <button onclick="togglePass('reset-pass2')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
+    </div>
+    <button class="btn-primary" onclick="confirmarReset()">Guardar nueva contraseña</button>
+  </div>
+</div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbzLk5eCuPB2D8IP4ivYhX9sXarj8zVBJS3mrZpeN3DPBTnMkttdu5A93-aAJFOqYQUV/exec';
+let usuario = JSON.parse(localStorage.getItem('spl_user') || 'null');
+let horariosData = [];
+let filtroActivo = 'todos';
+let accionPendiente = null;
+let fechaSel = {};
+let _resetToken = null;
+let _resetEmail = null;
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const MESES_SHORT = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const DIAS = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+document.addEventListener('DOMContentLoaded', () => {
+  actualizarUI();
+  cargarHorarios();
+  // Detectar link de reset de contraseña
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('reset_token');
+  const email = params.get('email');
+  if (token && email) {
+    _resetToken = token;
+    _resetEmail = email;
+    abrirModal('modal-reset');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+});
+
+async function api(action, params = {}) {
+  const url = new URL(API_URL);
+  url.searchParams.set('action', action);
+  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+  const res = await fetch(url);
+  return res.json();
+}
+
+function actualizarBannerCreditos(info) {
+  let banner = document.getElementById('creditos-banner');
+  if (!info || !info.tipoAbono) { if (banner) banner.style.display='none'; return; }
+  if (!banner) return;
+  if (info.ilimitado) {
+    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val">∞ clases</span>`;
+  } else {
+    const rest = info.creditosRestantes;
+    const color = rest===0?'#c0392b':rest<=1?'#c9a96e':'#6b8f71';
+    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val" style="color:${color}">${rest} crédito${rest!==1?'s':''} esta semana</span>`;
+  }
+  banner.style.display = 'flex';
+}
+
+function actualizarUI() {
+  const out = document.getElementById('auth-out');
+  const inn = document.getElementById('auth-in');
+  if (usuario) {
+    out.style.display='none'; inn.style.display='flex';
+    document.getElementById('user-name').textContent=usuario.nombre;
+    if (usuario.tipoAbono) actualizarBannerCreditos({ tipoAbono: usuario.tipoAbono, creditosRestantes: usuario.creditosRestantes, ilimitado: usuario.ilimitado });
+  } else {
+    out.style.display='flex'; inn.style.display='none';
+    const banner = document.getElementById('creditos-banner');
+    if (banner) banner.style.display='none';
+  }
+}
+
+function toggleUserMenu() {
+  document.getElementById('user-menu-panel').classList.toggle('open');
+}
+function closeUserMenu() {
+  document.getElementById('user-menu-panel').classList.remove('open');
+}
+// Cerrar el menu si se toca fuera
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('user-menu');
+  if (menu && !menu.contains(e.target)) closeUserMenu();
+});
+
+function logout() { localStorage.removeItem('spl_user'); usuario=null; actualizarUI(); cargarHorarios(); }
+
+async function checkLoginMethod() {
+  const dni = document.getElementById('login-dni').value.trim().replace(/\D/g,'');
+  if (!dni) return showMsg('login-msg','Ingresá tu DNI','error');
+  showMsg('login-msg','Verificando...','');
+  const res = await api('checkDni', {dni});
+  if (!res.ok) return showMsg('login-msg', res.error, 'error');
+  // Guardar DNI para los siguientes pasos
+  window._loginDni = dni;
+  document.getElementById('login-s1').style.display='none';
+  if (res.tienePassword) {
+    document.getElementById('login-s2a').style.display='block';
+    document.getElementById('login-password').focus();
+  } else {
+    // Sin contraseña → mandar código al email del cliente
+    const r2 = await api('loginCliente', {dni});
+    if (r2.ok) {
+      document.getElementById('login-s2b').style.display='block';
+      if (r2.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un código a ' + r2.emailMasked;
+      document.getElementById('login-codigo').focus();
+    } else {
+      document.getElementById('login-s1').style.display='block';
+      showMsg('login-msg', r2.error, 'error');
+    }
+  }
+}
+
+async function doLoginConPassword() {
+  const dni = window._loginDni;
+  const password = document.getElementById('login-password').value;
+  if (!password) return showMsg('login-msg2a','Ingresá tu contraseña','error');
+  showMsg('login-msg2a','Verificando...','');
+  const res = await api('loginConPassword', {dni, password});
+  if (res.ok) {
+    usuario = res.cliente;
+    localStorage.setItem('spl_user', JSON.stringify(usuario));
+    cerrarModal('modal-login');
+    actualizarUI();
+    cargarHorarios();
+  } else {
+    showMsg('login-msg2a', res.error, 'error');
+  }
+}
+
+async function usarCodigo() {
+  const dni = window._loginDni;
+  showMsg('login-msg2a','','');
+  document.getElementById('login-s2a').style.display='none';
+  const res = await api('loginCliente', {dni});
+  if (res.ok) {
+    document.getElementById('login-s2b').style.display='block';
+    if (res.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un código a ' + res.emailMasked;
+    document.getElementById('login-codigo').focus();
+  } else {
+    document.getElementById('login-s2a').style.display='block';
+    showMsg('login-msg2a', res.error, 'error');
+  }
+}
+
+async function olvideMiPassword() {
+  // Para reset usamos el email del cliente (que ya tenemos del checkDni)
+  // Primero obtenemos el email del cliente por DNI
+  const dni = window._loginDni;
+  if (!dni) return;
+  document.getElementById('login-s2a').style.display='none';
+  // El cliente tiene email guardado, enviamos reset
+  const res = await api('loginCliente', {dni}); // reutilizamos para obtener email
+  if (res.ok) {
+    document.getElementById('login-s3').style.display='block';
+  } else {
+    document.getElementById('login-s2a').style.display='block';
+    showMsg('login-msg2a', 'No se pudo enviar el reset. Contactá al studio.', 'error');
+  }
+}
+
+function volverLoginDni() {
+  ['login-s2a','login-s2b','login-s3'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display='none';
+  });
+  document.getElementById('login-s1').style.display='block';
+  window._loginDni = null;
+}
+
+async function verificarCodigo() {
+  const dni = window._loginDni;
+  const codigo = document.getElementById('login-codigo').value.trim();
+  if (!codigo || codigo.length !== 6) return showMsg('login-msg2b','Ingresá el código de 6 dígitos','error');
+  showMsg('login-msg2b','Verificando...','');
+  const res = await api('verificarCodigo', {dni, codigo});
+  if (res.ok) {
+    usuario = res.cliente;
+    localStorage.setItem('spl_user', JSON.stringify(usuario));
+    cerrarModal('modal-login');
+    actualizarUI();
+    cargarHorarios();
+  } else {
+    showMsg('login-msg2b', res.error, 'error');
+  }
+}
+
+// ── MIS DATOS ─────────────────────────────────────────────
+async function abrirMisDatos() {
+  if (!usuario) return;
+  document.getElementById('mis-datos-msg').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  abrirModal('modal-mis-datos');
+  const res = await api('getClientePerfil', {clienteId: usuario.id});
+  const c = res?.ok ? res.cliente : usuario;
+  document.getElementById('md-dni').value = c.dni || '—';
+  document.getElementById('md-nombre').value = c.nombre || '';
+  document.getElementById('md-email').value = c.email || '';
+  document.getElementById('md-telefono').value = c.telefono || '';
+  document.getElementById('mis-datos-msg').innerHTML = '';
+}
+
+async function guardarMisDatos() {
+  const nombre = document.getElementById('md-nombre').value.trim();
+  const email = document.getElementById('md-email').value.trim();
+  const telefono = document.getElementById('md-telefono').value.trim();
+  if (!nombre) return showMsg('mis-datos-msg','El nombre es obligatorio','error');
+  if (!email || !email.includes('@')) return showMsg('mis-datos-msg','Email inválido','error');
+  showMsg('mis-datos-msg','Guardando...','');
+  const res = await api('editarPerfil', {clienteId: usuario.id, nombre, email, telefono});
+  if (res.ok) {
+    // Actualizar datos locales
+    usuario.nombre = nombre;
+    usuario.email = email;
+    localStorage.setItem('spl_user', JSON.stringify(usuario));
+    document.getElementById('user-name').textContent = nombre;
+    showMsg('mis-datos-msg','✓ Datos actualizados correctamente','success');
+    setTimeout(() => cerrarModal('modal-mis-datos'), 1800);
+  } else {
+    showMsg('mis-datos-msg', res.error || 'Error al guardar', 'error');
+  }
+}
+
+// ── CONTRASEÑA ──────────────────────────────────────────────
+function togglePass(id) {
+  const el = document.getElementById(id);
+  el.type = el.type==='password' ? 'text' : 'password';
+}
+
+async function guardarPassword() {
+  if (!usuario) return;
+  const nueva     = document.getElementById('pass-nueva').value;
+  const confirmar = document.getElementById('pass-confirmar').value;
+  if (!nueva || nueva.length < 6) return showMsg('pass-msg','La contraseña debe tener al menos 6 caracteres','error');
+  if (nueva !== confirmar) return showMsg('pass-msg','Las contraseñas no coinciden','error');
+  showMsg('pass-msg','Guardando...','');
+  const res = await api('setPassword', {clienteId: usuario.id, password: nueva});
+  if (res.ok) {
+    showMsg('pass-msg','¡Contraseña guardada! Ya podés usarla para ingresar.','success');
+    document.getElementById('pass-nueva').value='';
+    document.getElementById('pass-confirmar').value='';
+    setTimeout(()=>cerrarModal('modal-password'), 2000);
+  } else {
+    showMsg('pass-msg', res.error, 'error');
+  }
+}
+
+async function confirmarReset() {
+  const pass1 = document.getElementById('reset-pass1').value;
+  const pass2 = document.getElementById('reset-pass2').value;
+  if (!pass1 || pass1.length < 6) return showMsg('reset-msg','La contraseña debe tener al menos 6 caracteres','error');
+  if (pass1 !== pass2) return showMsg('reset-msg','Las contraseñas no coinciden','error');
+  if (!_resetToken || !_resetEmail) return showMsg('reset-msg','Link inválido, solicitá uno nuevo','error');
+  showMsg('reset-msg','Guardando...','');
+  const res = await api('resetPasswordConfirm', {
+    email: _resetEmail,
+    token: _resetToken,
+    nuevaPassword: pass1
+  });
+  if (res.ok) {
+    showMsg('reset-msg','¡Contraseña actualizada! Ya podés ingresar.','success');
+    _resetToken = null; _resetEmail = null;
+    setTimeout(()=>{ cerrarModal('modal-reset'); abrirModal('modal-login'); }, 2000);
+  } else {
+    showMsg('reset-msg', res.error, 'error');
+  }
+}
+
+async function registrarse() {
+  const nombre  = document.getElementById('reg-nombre').value.trim();
+  const dni     = document.getElementById('reg-dni').value.trim().replace(/\D/g,'');
+  const email   = document.getElementById('reg-email').value.trim();
+  const tel     = document.getElementById('reg-tel').value.trim();
+  const edad    = document.getElementById('reg-edad').value.trim();
+  const fnac    = document.getElementById('reg-fnac').value;
+  const acepta  = document.getElementById('reg-acepta').checked;
+
+  // Validaciones básicas
+  if (!nombre) return showMsg('reg-msg','El nombre es requerido','error');
+  if (!dni || dni.length < 7) return showMsg('reg-msg','Ingresá tu DNI (sin puntos ni espacios)','error');
+  if (!email) return showMsg('reg-msg','El email es requerido','error');
+  if (!tel) return showMsg('reg-msg','El teléfono es requerido','error');
+  if (!edad) return showMsg('reg-msg','La edad es requerida','error');
+  if (!fnac) return showMsg('reg-msg','La fecha de nacimiento es requerida','error');
+  if (!acepta) return showMsg('reg-msg','Debés aceptar la declaración para continuar','error');
+
+  // Validar PAR-Q (todos los obligatorios)
+  const parqCampos = ['parq1','parq2','parq3','parq4','parq5','parq6'];
+  for (const c of parqCampos) {
+    if (!document.querySelector(`input[name="${c}"]:checked`))
+      return showMsg('reg-msg','Por favor respondé todas las preguntas del cuestionario PAR-Q','error');
+  }
+
+  // Lesiones - al menos una opción
+  const lesiones = [...document.querySelectorAll('input[name="lesion"]:checked')].map(i=>i.value);
+  if (!lesiones.length) return showMsg('reg-msg','Indicá si tuviste alguna lesión en los últimos 6 meses','error');
+
+  // Recopilar patologías
+  const patologias = [...document.querySelectorAll('input[name="patologia"]:checked')].map(i => {
+    if (i.value === 'Otra') { const v = document.getElementById('patologia-otra').value.trim(); return v || 'Otra'; }
+    return i.value;
+  });
+
+  // Lesiones (reemplazar "Otra" con el texto)
+  const lesionesFinales = lesiones.map(v => {
+    if (v === 'Otra') { const t = document.getElementById('lesion-otra').value.trim(); return t || 'Otra'; }
+    return v;
+  });
+
+  // Armar objeto PAR-Q
+  const parq = {
+    edad, fechaNacimiento: fnac,
+    patologias: patologias.join(', ') || 'Ninguna',
+    probCardiaco:   document.querySelector('input[name="parq1"]:checked')?.value,
+    dolorPechoEjercicio: document.querySelector('input[name="parq2"]:checked')?.value,
+    dolorPechoReposo:    document.querySelector('input[name="parq3"]:checked')?.value,
+    mareos:              document.querySelector('input[name="parq4"]:checked')?.value,
+    problemaOseo:        document.querySelector('input[name="parq5"]:checked')?.value,
+    problemaOseoCual:    document.getElementById('parq5-cual').value.trim(),
+    medicacionCardiaca:  document.querySelector('input[name="parq6"]:checked')?.value,
+    otraRazon:           document.getElementById('parq-otra-razon').value.trim(),
+    lesiones:            lesionesFinales.join(', '),
+  };
+
+  showMsg('reg-msg','Registrando...','');
+  const res = await api('registrarCliente', { nombre, dni, email, telefono: tel, parq: JSON.stringify(parq) });
+  if (res.ok) {
+    showMsg('reg-msg','¡Cuenta creada! Revisá tu email.','success');
+    usuario = res.cliente;
+    localStorage.setItem('spl_user', JSON.stringify(usuario));
+    setTimeout(()=>{ cerrarModal('modal-registro'); actualizarUI(); cargarHorarios(); }, 1800);
+  } else {
+    showMsg('reg-msg', res.error, 'error');
+  }
+}
+
+// Normaliza cualquier fecha a yyyy-MM-dd
+function normFechaFE(v) {
+  if (!v) return '';
+  var s = String(v).trim();
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  if (s.indexOf('T') !== -1) return s.substring(0, 10);
+  try {
+    var d = new Date(s);
+    if (!isNaN(d.getTime())) {
+      return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    }
+  } catch(e) {}
+  return s.substring(0,10);
+}
+async function cargarHorarios() {
+  document.getElementById('clases-grid').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  const params = { action: 'getHorarios' };
+  if (usuario?.id) params.clienteId = usuario.id;
+  const res = await api('getHorarios', params);
+  if (res.ok) {
+    horariosData = res.horarios;
+    // Actualizar créditos del usuario
+    if (res.creditosInfo && usuario) {
+      usuario.creditosRestantes = res.creditosInfo.creditosRestantes;
+      usuario.ilimitado = res.creditosInfo.ilimitado;
+      usuario.tipoAbono = res.creditosInfo.tipoAbono;
+      localStorage.setItem('spl_user', JSON.stringify(usuario));
+      actualizarBannerCreditos(res.creditosInfo);
+    }
+    renderHorarios();
+  }
+}
+
+function filtrar(dia, btn) {
+  filtroActivo=dia;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderHorarios();
+}
+
+function renderHorarios() {
+  const grid = document.getElementById('clases-grid');
+  const filtrados = filtroActivo==='todos' ? horariosData : horariosData.filter(h=>h.dia===filtroActivo);
+  if (!filtrados.length) { grid.innerHTML='<div class="empty-state"><div class="empty-icon">🧘</div><p>No hay clases disponibles</p></div>'; return; }
+  grid.innerHTML = filtrados.map(h=>renderCard(h)).join('');
+}
+
+function renderCard(h) {
+  const proximas = h.proximas || [];
+  if (!proximas.length) return '';
+  const selF = fechaSel[h.id] || proximas[0]?.fecha;
+  const fd = proximas.find(p=>p.fecha===selF) || proximas[0];
+  const disp = fd?.disponibles ?? 0;
+  const lleno = disp===0;
+  const pct = Math.round(((h.cupos_totales-disp)/h.cupos_totales)*100);
+  const tieneReserva = fd?.tieneReserva || false;
+  const reservaId = fd?.reservaId || null;
+  const esFijo = h.esFijo || false;
+  const postVenc = fd?.postVencimiento || false; // fecha cae despues del vencimiento del abono
+
+  const tabs = proximas.map(p=>{
+    const d=new Date(p.fecha+'T00:00:00');
+    let cls=['fecha-tab', p.disponibles===0&&!p.tieneReserva?'lleno':'disponible', p.fecha===selF?'selected':''];
+    if (p.postVencimiento && !p.tieneReserva) cls.push('post-venc');
+    return `<button class="${cls.join(' ')}" onclick="selFecha('${h.id}','${p.fecha}')">${d.getDate()} ${MESES_SHORT[d.getMonth()]}${p.postVencimiento?'*':''}</button>`;
+  }).join('');
+
+  let btn;
+  if (usuario) {
+    if (tieneReserva) {
+      const labelFijo = esFijo ? ' 📌 Horario fijo' : '';
+      btn = `<div style="display:flex;gap:8px">
+        <button class="btn-reservar" style="background:var(--success,#5a8a6a);flex:1;cursor:default">✓ Reservado${labelFijo}</button>
+        <button class="btn-reservar" style="background:none;border:1px solid var(--muted);color:var(--muted);width:auto;padding:13px 16px" onclick="accionCancelar('${reservaId}')">✕</button>
+      </div>`;
+    } else if (postVenc) {
+      // Fecha cae despues del vencimiento del abono
+      btn = `<button class="btn-reservar" style="background:none;border:1px solid #c09060;color:#c09060;cursor:default" onclick="avisarVencimiento()">⚠ Renovar abono para reservar</button>`;
+    } else if (esFijo) {
+      btn = `<button class="btn-reservar" style="background:var(--gold);color:var(--dark)" onclick="accionReservar('${h.id}','${selF}','${h.hora}','${h.instructor}')">📌 Confirmar horario fijo</button>`;
+    } else if (lleno) {
+      btn = `<button class="btn-reservar espera" onclick="accionEspera('${h.id}','${selF}')">Lista de espera (${fd.enEspera} esperando)</button>`;
+    } else {
+      btn = `<button class="btn-reservar" onclick="accionReservar('${h.id}','${selF}','${h.hora}','${h.instructor}')">Reservar lugar</button>`;
+    }
+  } else {
+    btn = `<button class="btn-reservar" onclick="abrirModal('modal-login')">Iniciá sesión para reservar</button>`;
+  }
+
+  const fijoTag = esFijo ? '<span style="font-size:9px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:4px">📌 Horario fijo</span>' : '';
+  const vencTag = proximas.some(p=>p.postVencimiento) ? '<div style="font-size:10px;color:#c09060;margin-bottom:6px">* Fecha fuera de tu abono actual</div>' : '';
+
+  return `<div class="clase-card">
+    ${fijoTag}
+    <div class="clase-dia">${h.dia}</div>
+    <div class="clase-hora">${h.hora}</div>
+    <div class="clase-instructor">${h.instructor} · ${h.duracion} min</div>
+    ${h.descripcion?`<div class="clase-desc">${h.descripcion}</div>`:''}
+    <span class="fecha-label">Elegí tu fecha</span>
+    <div class="fecha-tabs">${tabs}</div>
+    ${vencTag}
+    <div class="cupos-bar">
+      <div class="cupos-track"><div class="cupos-fill ${lleno?'lleno':''}" style="width:${pct}%"></div></div>
+      <span class="cupos-text">${lleno?'Completo':`${disp} lugar${disp!==1?'es':''}`}</span>
+    </div>
+    ${btn}
+  </div>`;
+}
+
+function selFecha(horarioId, fecha) { fechaSel[horarioId]=fecha; renderHorarios(); }
+
+function avisarVencimiento() {
+  // Mostrar modal de aviso de abono vencido
+  const venc = usuario?.fechaVencimiento || '';
+  const d = venc ? new Date(venc+'T00:00:00') : null;
+  const fechaStr = d ? `${d.getDate()} de ${MESES[d.getMonth()]}` : '';
+  document.getElementById('conf-titulo').textContent = 'Abono vencido';
+  document.getElementById('conf-detalle').innerHTML = `
+    <div style="text-align:center;padding:8px 0">
+      <div style="font-size:32px;margin-bottom:12px">⚠️</div>
+      <p style="font-size:14px;color:var(--dark);margin-bottom:8px">Tu abono vence el <strong>${fechaStr}</strong>.</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">Para reservar clases en esa fecha necesitás renovar tu abono.<br>Contactá al studio para regularizar tu situación.</p>
+    </div>`;
+  const btn = document.getElementById('conf-btn');
+  btn.textContent = 'Cerrar';
+  btn.disabled = false;
+  btn.onclick = function(){ cerrarModal('modal-confirmar'); };
+  document.getElementById('conf-msg').innerHTML = '';
+  accionPendiente = null;
+  abrirModal('modal-confirmar');
+}
+
+function accionReservar(horarioId, fecha, hora, instructor) {
+  const d=new Date(fecha+'T00:00:00');
+  document.getElementById('conf-titulo').textContent='Confirmar reserva';
+  document.getElementById('conf-detalle').innerHTML=`
+    <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Detalle</p>
+    <p style="font-size:18px;color:var(--dark);margin-bottom:4px">${DIAS[d.getDay()]} ${hora}</p>
+    <p style="font-size:13px;color:var(--muted)">${d.getDate()} de ${MESES[d.getMonth()]} · ${instructor}</p>`;
+  const btn=document.getElementById('conf-btn');
+  btn.textContent='Confirmar reserva';
+  btn.disabled=false;
+  btn.onclick=ejecutarAccion;
+  document.getElementById('conf-msg').innerHTML='';
+  accionPendiente={tipo:'reservar',horarioId,fecha};
+  abrirModal('modal-confirmar');
+}
+
+function accionEspera(horarioId, fecha) {
+  document.getElementById('conf-titulo').textContent='Lista de espera';
+  document.getElementById('conf-detalle').innerHTML='<p style="font-size:13px;color:var(--muted)">La clase está completa. Te avisaremos por email si se libera un cupo.</p>';
+  const btn=document.getElementById('conf-btn');
+  btn.textContent='Anotarme en espera';
+  btn.disabled=false;
+  btn.onclick=ejecutarAccion;
+  document.getElementById('conf-msg').innerHTML='';
+  accionPendiente={tipo:'espera',horarioId,fecha};
+  abrirModal('modal-confirmar');
+}
+
+async function ejecutarAccion() {
+  if (!accionPendiente) return;
+  const btn=document.getElementById('conf-btn');
+  btn.disabled=true; btn.textContent='Procesando...';
+  let res;
+  if (accionPendiente.tipo==='reservar') {
+    res=await api('reservarTurno',{clienteId:usuario.id,horarioId:accionPendiente.horarioId,fechaClase:accionPendiente.fecha});
+    if (res.ok) {
+      showMsg('conf-msg','✓ ¡Reserva confirmada! Revisá tu email.','success');
+      accionPendiente = null;
+      btn.textContent='Cerrar';
+      btn.disabled=false;
+      btn.onclick=function(){ cerrarModal('modal-confirmar'); };
+      if (res.creditosRestantes !== undefined) {
+        usuario.creditosRestantes = res.creditosRestantes;
+        localStorage.setItem('spl_user', JSON.stringify(usuario));
+        actualizarBannerCreditos({ tipoAbono: usuario.tipoAbono, creditosRestantes: res.creditosRestantes, ilimitado: res.creditosRestantes >= 999 });
+      }
+      // Recargar horarios para actualizar cupos y cerrar modal automáticamente
+      await cargarHorarios();
+      setTimeout(function(){ cerrarModal('modal-confirmar'); }, 1500);
+    } else {
+      showMsg('conf-msg', res.error || 'Error al reservar', 'error');
+      btn.disabled=false; btn.textContent='Reintentar';
+    }
+  } else {
+    res=await api('anotarseEspera',{clienteId:usuario.id,horarioId:accionPendiente.horarioId,fechaClase:accionPendiente.fecha});
+    if (res.ok) {
+      showMsg('conf-msg',`✓ Estás en posición #${res.posicion}. Te avisaremos si hay cupo.`,'success');
+      accionPendiente = null;
+      btn.textContent='Cerrar';
+      btn.disabled=false;
+      btn.onclick=function(){ cerrarModal('modal-confirmar'); };
+      await cargarHorarios();
+      setTimeout(function(){ cerrarModal('modal-confirmar'); }, 1500);
+    } else {
+      showMsg('conf-msg',res.error,'error');
+      btn.disabled=false; btn.textContent='Reintentar';
+    }
+  }
+}
+
+let _misReservas = [];
+let _calMes = new Date();
+
+async function abrirMisReservas() {
+  abrirModal('modal-mis-reservas');
+  const c = document.getElementById('mis-reservas-content');
+  c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  document.getElementById('cal-nav').style.display = 'none';
+  document.getElementById('cal-grid').style.display = 'none';
+
+  const res = await api('getMisReservas', {clienteId: usuario.id});
+  if (!res.ok || !res.reservas.length) {
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">📅</div><p>No tenés reservas próximas</p></div>';
+    return;
+  }
+
+  _misReservas = res.reservas.map(r => ({
+    ...r,
+    fecha_clase: normFechaFE(r.fecha_clase)
+  }));
+
+  // Mostrar navegación y calendario
+  document.getElementById('cal-nav').style.display = 'flex';
+  document.getElementById('cal-grid').style.display = 'block';
+
+  // Ir al mes de la primer reserva
+  const primera = new Date(_misReservas[0].fecha_clase + 'T00:00:00');
+  _calMes = new Date(primera.getFullYear(), primera.getMonth(), 1);
+
+  renderCalendario();
+  renderListaReservas();
+}
+
+function calCambiarMes(delta) {
+  _calMes = new Date(_calMes.getFullYear(), _calMes.getMonth() + delta, 1);
+  renderCalendario();
+}
+
+function renderCalendario() {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const año = _calMes.getFullYear();
+  const mes = _calMes.getMonth();
+  const MESES_L = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  document.getElementById('cal-titulo').textContent = `${MESES_L[mes]} ${año}`;
+
+  // Fechas reservadas de este mes
+  const reservadasMes = new Set(
+    _misReservas
+      .filter(r => { const d = new Date(r.fecha_clase+'T00:00:00'); return d.getMonth()===mes && d.getFullYear()===año; })
+      .map(r => r.fecha_clase)
+  );
+
+  // Primer día del mes (0=Dom, ajustar a Lun)
+  const primerDia = new Date(año, mes, 1).getDay();
+  const offset = primerDia === 0 ? 6 : primerDia - 1; // lunes primero
+  const diasEnMes = new Date(año, mes + 1, 0).getDate();
+
+  let html = '<div class="cal-grid">';
+  // Headers
+  ['Lu','Ma','Mi','Ju','Vi','Sa','Do'].forEach(d => {
+    html += `<div class="cal-dia-header">${d}</div>`;
+  });
+  // Vacíos inicio
+  for (let i = 0; i < offset; i++) html += '<div class="cal-dia vacio"></div>';
+  // Días
+  for (let dia = 1; dia <= diasEnMes; dia++) {
+    const fecha = `${año}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+    const fechaDate = new Date(fecha + 'T00:00:00');
+    const esHoy = fechaDate.getTime() === hoy.getTime();
+    const esReservado = reservadasMes.has(fecha);
+    const esPasado = fechaDate < hoy;
+
+    let cls = 'cal-dia';
+    if (esReservado) cls += ' reservado';
+    else if (esHoy) cls += ' hoy';
+    else if (esPasado) cls += ' pasado normal';
+    else cls += ' normal';
+
+    const onclick = esReservado ? `onclick="calDiaClick('${fecha}')"` : '';
+    const titulo = esReservado ? `title="${_misReservas.filter(r=>r.fecha_clase===fecha).map(r=>r.horario?.dia+' '+r.horario?.hora).join(', ')}"` : '';
+    html += `<div class="${cls}" ${onclick} ${titulo}>${dia}</div>`;
+  }
+  html += '</div>';
+
+  // Leyenda
+  html += `<div style="display:flex;align-items:center;gap:12px;margin-top:6px;font-size:9px;color:var(--muted);letter-spacing:.5px">
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;background:var(--dark);border-radius:50%;display:inline-block"></span> Reservada</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="width:12px;height:12px;border:1px solid var(--gold);border-radius:50%;display:inline-block"></span> Hoy</span>
+  </div>`;
+
+  document.getElementById('cal-grid').innerHTML = html;
+}
+
+function calDiaClick(fecha) {
+  // Scroll/highlight la reserva en la lista
+  const item = document.querySelector(`[data-fecha="${fecha}"]`);
+  if (item) {
+    item.scrollIntoView({behavior:'smooth', block:'center'});
+    item.style.background = 'rgba(201,169,110,0.1)';
+    setTimeout(() => item.style.background = '', 1200);
+  }
+}
+
+function renderListaReservas() {
+  const c = document.getElementById('mis-reservas-content');
+  const fmtHoraUI = t => { if(!t) return '—'; const p=String(t).split(':'); return p[0].padStart(2,'0')+':'+(p[1]||'00'); };
+
+  // Agrupar por mes
+  let htmlPorMes = '';
+  let mesActual = '';
+  const MESES_L = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+  _misReservas.forEach(r => {
+    const d = new Date(r.fecha_clase + 'T00:00:00');
+    const mesKey = `${d.getFullYear()}-${d.getMonth()}`;
+    if (mesKey !== mesActual) {
+      mesActual = mesKey;
+      htmlPorMes += `<div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:10px 0 6px">${MESES_L[d.getMonth()]} ${d.getFullYear()}</div>`;
+    }
+    const h = r.horario;
+    htmlPorMes += `<div class="reserva-item" data-fecha="${r.fecha_clase}" style="padding:12px 14px">
+      <div class="reserva-info">
+        <div class="r-fecha">${DIAS[d.getDay()]} ${d.getDate()} ${MESES_SHORT[d.getMonth()]}</div>
+        <div class="r-clase" style="font-size:13px">${h ? fmtHoraUI(h.hora) + ' · ' + h.dia : '—'}</div>
+        <div class="r-inst">${h ? h.instructor : ''}</div>
+      </div>
+      ${r.estado==='activa'
+        ? `<button class="btn-cancelar" onclick="cancelarReserva('${r.id}')">Cancelar</button>`
+        : '<span style="font-size:11px;color:var(--muted)">Cancelada</span>'}
+    </div>`;
+  });
+
+  c.innerHTML = htmlPorMes;
+}
+
+async function cancelarReserva(reservaId) {
+  if (!confirm('¿Segura que querés cancelar esta reserva?')) return;
+  const res=await api('cancelarReserva',{reservaId,clienteId:usuario.id});
+  if (res.ok) { abrirMisReservas(); cargarHorarios(); }
+  else alert(res.error);
+}
+
+function abrirModal(id) { document.getElementById(id).classList.add('open'); }
+function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
+function showMsg(id, txt, tipo) { const el=document.getElementById(id); if(el) el.innerHTML=txt?`<div class="msg ${tipo}">${txt}</div>`:''; }
+
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
+});
+</script>
+
+<!-- BOTÓN AYUDA -->
+<button onclick="abrirModal('modal-ayuda')" style="position:fixed;bottom:24px;right:24px;z-index:900;width:44px;height:44px;border-radius:50%;background:var(--dark);border:1px solid var(--gold);color:var(--gold-light);font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:all .2s;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:300" onmouseover="this.style.background='var(--gold);this.style.color='var(--dark)'" title="Ayuda">?</button>
+
+<!-- MODAL AYUDA CLIENTA -->
+<div class="modal-overlay" id="modal-ayuda">
+  <div class="modal" style="max-width:500px;max-height:85vh;overflow-y:auto">
+    <div class="modal-header" style="position:sticky;top:0;background:white;z-index:1;padding-bottom:12px">
+      <h2 class="modal-title">Cómo usar la app</h2>
+      <button class="modal-close" onclick="cerrarModal('modal-ayuda')">✕</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:20px">
+
+      <div>
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Registrarse por primera vez</div>
+        <ol style="padding-left:18px;font-size:13px;color:#555;line-height:2">
+          <li>Tocá <strong>Registrarse</strong> en el encabezado</li>
+          <li>Completá tu nombre, DNI, email y teléfono</li>
+          <li>Respondé el cuestionario de salud PAR-Q</li>
+          <li>Aceptá la declaración y tocá <strong>Crear cuenta</strong></li>
+          <li>Recibirás un email de bienvenida</li>
+        </ol>
+      </div>
+
+      <div>
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Ingresar a tu cuenta</div>
+        <ol style="padding-left:18px;font-size:13px;color:#555;line-height:2">
+          <li>Tocá <strong>Ingresar</strong> y escribí tu DNI</li>
+          <li>Si tenés contraseña, ingresála directamente</li>
+          <li>Si no, tocá <em>Prefiero usar código por email</em> — te llegará un código de 6 dígitos</li>
+          <li>Para configurar contraseña, usá el ícono 🔑 en el encabezado</li>
+        </ol>
+      </div>
+
+      <div>
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Reservar una clase</div>
+        <ol style="padding-left:18px;font-size:13px;color:#555;line-height:2">
+          <li>Elegí el horario que más te guste</li>
+          <li>Seleccioná la fecha en los botones de días</li>
+          <li>Tocá <strong>Reservar lugar</strong></li>
+          <li>Confirmá en el resumen y recibirás un email de confirmación</li>
+          <li>Podés filtrar por día con los botones de la barra superior</li>
+        </ol>
+      </div>
+
+      <div>
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Ver y cancelar mis reservas</div>
+        <ul style="padding-left:18px;font-size:13px;color:#555;line-height:2">
+          <li>Tocá <strong>Mis reservas</strong> en el encabezado</li>
+          <li>Verás el calendario con tus clases marcadas en negro</li>
+          <li>Debajo aparece la lista con día, hora e instructor</li>
+          <li>Para cancelar, tocá <strong>Cancelar</strong> en la reserva</li>
+          <li>Si cancelás con suficiente anticipación, se te devuelve el crédito</li>
+        </ul>
+      </div>
+
+      <div>
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Créditos y abonos</div>
+        <ul style="padding-left:18px;font-size:13px;color:#555;line-height:2">
+          <li>Cada clase reservada consume un crédito de tu semana</li>
+          <li>Podés reservar para la semana actual y las próximas</li>
+          <li>Si tu abono vence, no podrás reservar fechas posteriores</li>
+          <li>Contactá al studio para renovar tu abono</li>
+        </ul>
+      </div>
+
+      <div>
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Mis datos</div>
+        <ul style="padding-left:18px;font-size:13px;color:#555;line-height:2">
+          <li>Tocá <strong>👤 Mis datos</strong> para ver y actualizar tu perfil</li>
+          <li>Podés cambiar tu nombre, email y teléfono</li>
+          <li>El DNI no se puede modificar (es tu identificador)</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>
