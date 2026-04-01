@@ -574,12 +574,12 @@ let _resetToken = null;
 let _resetEmail = null;
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const MESES_SHORT = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-const DIAS = ['Domingo','Lunes','Martes','Mi&eacute;rcoles','Jueves','Viernes','S&aacute;bado'];
+const DIAS = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
 
 document.addEventListener('DOMContentLoaded', () => {
   actualizarUI();
   cargarHorarios();
-  // Detectar link de reset de contrase&ntilde;a
+  // Detectar link de reset de contrasena
   const params = new URLSearchParams(window.location.search);
   const token = params.get('reset_token');
   const email = params.get('email');
@@ -608,7 +608,7 @@ function actualizarBannerCreditos(info) {
   } else {
     const rest = info.creditosRestantes;
     const color = rest===0?'#c0392b':rest<=1?'#c9a96e':'#6b8f71';
-    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val" style="color:${color}">${rest} cr&eacute;dito${rest!==1?'s':''} esta semana</span>`;
+    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val" style="color:${color}">${rest} credito${rest!==1?'s':''} esta semana</span>`;
   }
   banner.style.display = 'flex';
 }
@@ -626,7 +626,7 @@ function actualizarUI() {
     out.style.display='flex'; inn.style.display='none';
     const banner = document.getElementById('creditos-banner');
     if (banner) banner.style.display='none';
-    if (filters) filters.style.display='none'; // Ocultar filtros de d&iacute;as
+    if (filters) filters.style.display='none'; // Ocultar filtros de dias
   }
 }
 
@@ -646,7 +646,7 @@ function logout() { localStorage.removeItem('spl_user'); usuario=null; actualiza
 
 async function checkLoginMethod() {
   const dni = document.getElementById('login-dni').value.trim().replace(/\D/g,'');
-  if (!dni) return showMsg('login-msg','Ingres&aacute; tu DNI','error');
+  if (!dni) return showMsg('login-msg','Ingresa tu DNI','error');
   showMsg('login-msg','Verificando...','');
   const res = await api('checkDni', {dni});
   if (!res.ok) return showMsg('login-msg', res.error, 'error');
@@ -657,11 +657,11 @@ async function checkLoginMethod() {
     document.getElementById('login-s2a').style.display='block';
     document.getElementById('login-password').focus();
   } else {
-    // Sin contrase&ntilde;a -> mandar c&oacute;digo al email del cliente
+    // Sin contrasena -> mandar codigo al email del cliente
     const r2 = await api('loginCliente', {dni});
     if (r2.ok) {
       document.getElementById('login-s2b').style.display='block';
-      if (r2.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un c&oacute;digo a ' + r2.emailMasked;
+      if (r2.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un codigo a ' + r2.emailMasked;
       document.getElementById('login-codigo').focus();
     } else {
       document.getElementById('login-s1').style.display='block';
@@ -673,7 +673,7 @@ async function checkLoginMethod() {
 async function doLoginConPassword() {
   const dni = window._loginDni;
   const password = document.getElementById('login-password').value;
-  if (!password) return showMsg('login-msg2a','Ingres&aacute; tu contrase&ntilde;a','error');
+  if (!password) return showMsg('login-msg2a','Ingresa tu contrasena','error');
   showMsg('login-msg2a','Verificando...','');
   const res = await api('loginConPassword', {dni, password});
   if (res.ok) {
@@ -694,7 +694,7 @@ async function usarCodigo() {
   const res = await api('loginCliente', {dni});
   if (res.ok) {
     document.getElementById('login-s2b').style.display='block';
-    if (res.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un c&oacute;digo a ' + res.emailMasked;
+    if (res.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un codigo a ' + res.emailMasked;
     document.getElementById('login-codigo').focus();
   } else {
     document.getElementById('login-s2a').style.display='block';
@@ -714,7 +714,7 @@ async function olvideMiPassword() {
     document.getElementById('login-s3').style.display='block';
   } else {
     document.getElementById('login-s2a').style.display='block';
-    showMsg('login-msg2a', 'No se pudo enviar el reset. Contact&aacute; al studio.', 'error');
+    showMsg('login-msg2a', 'No se pudo enviar el reset. Contacta al studio.', 'error');
   }
 }
 
@@ -730,7 +730,7 @@ function volverLoginDni() {
 async function verificarCodigo() {
   const dni = window._loginDni;
   const codigo = document.getElementById('login-codigo').value.trim();
-  if (!codigo || codigo.length !== 6) return showMsg('login-msg2b','Ingres&aacute; el c&oacute;digo de 6 d&iacute;gitos','error');
+  if (!codigo || codigo.length !== 6) return showMsg('login-msg2b','Ingresa el codigo de 6 digitos','error');
   showMsg('login-msg2b','Verificando...','');
   const res = await api('verificarCodigo', {dni, codigo});
   if (res.ok) {
@@ -751,7 +751,7 @@ async function abrirMisDatos() {
   abrirModal('modal-mis-datos');
   const res = await api('getClientePerfil', {clienteId: usuario.id});
   const c = res?.ok ? res.cliente : usuario;
-  document.getElementById('md-dni').value = c.dni || '&mdash;';
+  document.getElementById('md-dni').value = c.dni || '-';
   document.getElementById('md-nombre').value = c.nombre || '';
   document.getElementById('md-email').value = c.email || '';
   document.getElementById('md-telefono').value = c.telefono || '';
@@ -763,7 +763,7 @@ async function guardarMisDatos() {
   const email = document.getElementById('md-email').value.trim();
   const telefono = document.getElementById('md-telefono').value.trim();
   if (!nombre) return showMsg('mis-datos-msg','El nombre es obligatorio','error');
-  if (!email || !email.includes('@')) return showMsg('mis-datos-msg','Email inv&aacute;lido','error');
+  if (!email || !email.includes('@')) return showMsg('mis-datos-msg','Email invalido','error');
   showMsg('mis-datos-msg','Guardando...','');
   const res = await api('editarPerfil', {clienteId: usuario.id, nombre, email, telefono});
   if (res.ok) {
@@ -779,7 +779,7 @@ async function guardarMisDatos() {
   }
 }
 
-// -- CONTRASE&Ntilde;A ----------------------------------------------
+// -- CONTRASENA ----------------------------------------------
 function togglePass(id) {
   const el = document.getElementById(id);
   el.type = el.type==='password' ? 'text' : 'password';
@@ -789,12 +789,12 @@ async function guardarPassword() {
   if (!usuario) return;
   const nueva     = document.getElementById('pass-nueva').value;
   const confirmar = document.getElementById('pass-confirmar').value;
-  if (!nueva || nueva.length < 6) return showMsg('pass-msg','La contrase&ntilde;a debe tener al menos 6 caracteres','error');
-  if (nueva !== confirmar) return showMsg('pass-msg','Las contrase&ntilde;as no coinciden','error');
+  if (!nueva || nueva.length < 6) return showMsg('pass-msg','La contrasena debe tener al menos 6 caracteres','error');
+  if (nueva !== confirmar) return showMsg('pass-msg','Las contrasenas no coinciden','error');
   showMsg('pass-msg','Guardando...','');
   const res = await api('setPassword', {clienteId: usuario.id, password: nueva});
   if (res.ok) {
-    showMsg('pass-msg','&iexcl;Contrase&ntilde;a guardada! Ya pod&eacute;s usarla para ingresar.','success');
+    showMsg('pass-msg','!Contrasena guardada! Ya podes usarla para ingresar.','success');
     document.getElementById('pass-nueva').value='';
     document.getElementById('pass-confirmar').value='';
     setTimeout(()=>cerrarModal('modal-password'), 2000);
@@ -806,9 +806,9 @@ async function guardarPassword() {
 async function confirmarReset() {
   const pass1 = document.getElementById('reset-pass1').value;
   const pass2 = document.getElementById('reset-pass2').value;
-  if (!pass1 || pass1.length < 6) return showMsg('reset-msg','La contrase&ntilde;a debe tener al menos 6 caracteres','error');
-  if (pass1 !== pass2) return showMsg('reset-msg','Las contrase&ntilde;as no coinciden','error');
-  if (!_resetToken || !_resetEmail) return showMsg('reset-msg','Link inv&aacute;lido, solicit&aacute; uno nuevo','error');
+  if (!pass1 || pass1.length < 6) return showMsg('reset-msg','La contrasena debe tener al menos 6 caracteres','error');
+  if (pass1 !== pass2) return showMsg('reset-msg','Las contrasenas no coinciden','error');
+  if (!_resetToken || !_resetEmail) return showMsg('reset-msg','Link invalido, solicita uno nuevo','error');
   showMsg('reset-msg','Guardando...','');
   const res = await api('resetPasswordConfirm', {
     email: _resetEmail,
@@ -816,7 +816,7 @@ async function confirmarReset() {
     nuevaPassword: pass1
   });
   if (res.ok) {
-    showMsg('reset-msg','&iexcl;Contrase&ntilde;a actualizada! Ya pod&eacute;s ingresar.','success');
+    showMsg('reset-msg','!Contrasena actualizada! Ya podes ingresar.','success');
     _resetToken = null; _resetEmail = null;
     setTimeout(()=>{ cerrarModal('modal-reset'); abrirModal('modal-login'); }, 2000);
   } else {
@@ -833,27 +833,27 @@ async function registrarse() {
   const fnac    = document.getElementById('reg-fnac').value;
   const acepta  = document.getElementById('reg-acepta').checked;
 
-  // Validaciones b&aacute;sicas
+  // Validaciones basicas
   if (!nombre) return showMsg('reg-msg','El nombre es requerido','error');
-  if (!dni || dni.length < 7) return showMsg('reg-msg','Ingres&aacute; tu DNI (sin puntos ni espacios)','error');
+  if (!dni || dni.length < 7) return showMsg('reg-msg','Ingresa tu DNI (sin puntos ni espacios)','error');
   if (!email) return showMsg('reg-msg','El email es requerido','error');
-  if (!tel) return showMsg('reg-msg','El tel&eacute;fono es requerido','error');
+  if (!tel) return showMsg('reg-msg','El telefono es requerido','error');
   if (!edad) return showMsg('reg-msg','La edad es requerida','error');
   if (!fnac) return showMsg('reg-msg','La fecha de nacimiento es requerida','error');
-  if (!acepta) return showMsg('reg-msg','Deb&eacute;s aceptar la declaraci&oacute;n para continuar','error');
+  if (!acepta) return showMsg('reg-msg','Debes aceptar la declaracion para continuar','error');
 
   // Validar PAR-Q (todos los obligatorios)
   const parqCampos = ['parq1','parq2','parq3','parq4','parq5','parq6'];
   for (const c of parqCampos) {
     if (!document.querySelector(`input[name="${c}"]:checked`))
-      return showMsg('reg-msg','Por favor respond&eacute; todas las preguntas del cuestionario PAR-Q','error');
+      return showMsg('reg-msg','Por favor responde todas las preguntas del cuestionario PAR-Q','error');
   }
 
-  // Lesiones - al menos una opci&oacute;n
+  // Lesiones - al menos una opcion
   const lesiones = [...document.querySelectorAll('input[name="lesion"]:checked')].map(i=>i.value);
-  if (!lesiones.length) return showMsg('reg-msg','Indic&aacute; si tuviste alguna lesi&oacute;n en los &uacute;ltimos 6 meses','error');
+  if (!lesiones.length) return showMsg('reg-msg','Indica si tuviste alguna lesion en los ultimos 6 meses','error');
 
-  // Recopilar patolog&iacute;as
+  // Recopilar patologias
   const patologias = [...document.querySelectorAll('input[name="patologia"]:checked')].map(i => {
     if (i.value === 'Otra') { const v = document.getElementById('patologia-otra').value.trim(); return v || 'Otra'; }
     return i.value;
@@ -883,7 +883,7 @@ async function registrarse() {
   showMsg('reg-msg','Registrando...','');
   const res = await api('registrarCliente', { nombre, dni, email, telefono: tel, parq: JSON.stringify(parq) });
   if (res.ok) {
-    showMsg('reg-msg','&iexcl;Cuenta creada! Revis&aacute; tu email.','success');
+    showMsg('reg-msg','!Cuenta creada! Revisa tu email.','success');
     usuario = res.cliente;
     localStorage.setItem('spl_user', JSON.stringify(usuario));
     setTimeout(()=>{ cerrarModal('modal-registro'); actualizarUI(); cargarHorarios(); }, 1800);
@@ -913,7 +913,7 @@ async function cargarHorarios() {
   const res = await api('getHorarios', params);
   if (res.ok) {
     horariosData = res.horarios;
-    // Actualizar cr&eacute;ditos del usuario
+    // Actualizar creditos del usuario
     if (res.creditosInfo && usuario) {
       usuario.creditosRestantes = res.creditosInfo.creditosRestantes;
       usuario.ilimitado = res.creditosInfo.ilimitado;
@@ -926,7 +926,7 @@ async function cargarHorarios() {
 }
 
 function filtrar(dia, btn) {
-  if (!usuario) return; // No hacer nada sin sesi&oacute;n
+  if (!usuario) return; // No hacer nada sin sesion
   filtroActivo=dia;
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -935,12 +935,12 @@ function filtrar(dia, btn) {
 
 function renderHorarios() {
   const grid = document.getElementById('clases-grid');
-  // Si no hay sesi&oacute;n, mostrar muro de login
+  // Si no hay sesion, mostrar muro de login
   if (!usuario) {
     grid.innerHTML = `<div class="guest-wall">
       <div class="guest-wall-icon">&#x1F512;</div>
-      <h3>Inici&aacute; sesi&oacute;n para ver los horarios</h3>
-      <p>Acced&eacute; a tu cuenta para ver las clases disponibles y hacer tu reserva.</p>
+      <h3>Inicia sesion para ver los horarios</h3>
+      <p>Accede a tu cuenta para ver las clases disponibles y hacer tu reserva.</p>
       <div class="guest-wall-btns">
         <button class="hdr-btn solid" onclick="abrirModal('modal-login')">Ingresar</button>
         <button class="hdr-btn" onclick="abrirModal('modal-registro')">Registrarse</button>
@@ -992,7 +992,7 @@ function renderCard(h) {
       btn = `<button class="btn-reservar" onclick="accionReservar('${h.id}','${selF}','${h.hora}','${h.instructor}')">Reservar lugar</button>`;
     }
   } else {
-    btn = `<button class="btn-reservar" onclick="abrirModal('modal-login')">Inici&aacute; sesi&oacute;n para reservar</button>`;
+    btn = `<button class="btn-reservar" onclick="abrirModal('modal-login')">Inicia sesion para reservar</button>`;
   }
 
   const fijoTag = esFijo ? '<span style="font-size:9px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:4px">&#x1F4CC; Horario fijo</span>' : '';
@@ -1002,9 +1002,9 @@ function renderCard(h) {
     ${fijoTag}
     <div class="clase-dia">${h.dia}</div>
     <div class="clase-hora">${h.hora}</div>
-    <div class="clase-instructor">${h.instructor} &middot; ${h.duracion} min</div>
+    <div class="clase-instructor">${h.instructor} . ${h.duracion} min</div>
     ${h.descripcion?`<div class="clase-desc">${h.descripcion}</div>`:''}
-    <span class="fecha-label">Eleg&iacute; tu fecha</span>
+    <span class="fecha-label">Elegi tu fecha</span>
     <div class="fecha-tabs">${tabs}</div>
     ${vencTag}
     <div class="cupos-bar">
@@ -1027,7 +1027,7 @@ function avisarVencimiento() {
     <div style="text-align:center;padding:8px 0">
       <div style="font-size:32px;margin-bottom:12px">&#x26A0;</div>
       <p style="font-size:14px;color:var(--dark);margin-bottom:8px">Tu abono vence el <strong>${fechaStr}</strong>.</p>
-      <p style="font-size:13px;color:var(--muted);line-height:1.6">Para reservar clases en esa fecha necesit&aacute;s renovar tu abono.<br>Contact&aacute; al studio para regularizar tu situaci&oacute;n.</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">Para reservar clases en esa fecha necesitas renovar tu abono.<br>Contacta al studio para regularizar tu situacion.</p>
     </div>`;
   const btn = document.getElementById('conf-btn');
   btn.textContent = 'Cerrar';
@@ -1044,7 +1044,7 @@ function accionReservar(horarioId, fecha, hora, instructor) {
   document.getElementById('conf-detalle').innerHTML=`
     <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Detalle</p>
     <p style="font-size:18px;color:var(--dark);margin-bottom:4px">${DIAS[d.getDay()]} ${hora}</p>
-    <p style="font-size:13px;color:var(--muted)">${d.getDate()} de ${MESES[d.getMonth()]} &middot; ${instructor}</p>`;
+    <p style="font-size:13px;color:var(--muted)">${d.getDate()} de ${MESES[d.getMonth()]} . ${instructor}</p>`;
   const btn=document.getElementById('conf-btn');
   btn.textContent='Confirmar reserva';
   btn.disabled=false;
@@ -1056,7 +1056,7 @@ function accionReservar(horarioId, fecha, hora, instructor) {
 
 function accionEspera(horarioId, fecha) {
   document.getElementById('conf-titulo').textContent='Lista de espera';
-  document.getElementById('conf-detalle').innerHTML='<p style="font-size:13px;color:var(--muted)">La clase est&aacute; completa. Te avisaremos por email si se libera un cupo.</p>';
+  document.getElementById('conf-detalle').innerHTML='<p style="font-size:13px;color:var(--muted)">La clase esta completa. Te avisaremos por email si se libera un cupo.</p>';
   const btn=document.getElementById('conf-btn');
   btn.textContent='Anotarme en espera';
   btn.disabled=false;
@@ -1074,7 +1074,7 @@ async function ejecutarAccion() {
   if (accionPendiente.tipo==='reservar') {
     res=await api('reservarTurno',{clienteId:usuario.id,horarioId:accionPendiente.horarioId,fechaClase:accionPendiente.fecha});
     if (res.ok) {
-      showMsg('conf-msg','&#x2713; &iexcl;Reserva confirmada! Revis&aacute; tu email.','success');
+      showMsg('conf-msg','&#x2713; !Reserva confirmada! Revisa tu email.','success');
       accionPendiente = null;
       btn.textContent='Cerrar';
       btn.disabled=false;
@@ -1084,7 +1084,7 @@ async function ejecutarAccion() {
         localStorage.setItem('spl_user', JSON.stringify(usuario));
         actualizarBannerCreditos({ tipoAbono: usuario.tipoAbono, creditosRestantes: res.creditosRestantes, ilimitado: res.creditosRestantes >= 999 });
       }
-      // Recargar horarios para actualizar cupos y cerrar modal autom&aacute;ticamente
+      // Recargar horarios para actualizar cupos y cerrar modal automaticamente
       await cargarHorarios();
       setTimeout(function(){ cerrarModal('modal-confirmar'); }, 1500);
     } else {
@@ -1094,7 +1094,7 @@ async function ejecutarAccion() {
   } else {
     res=await api('anotarseEspera',{clienteId:usuario.id,horarioId:accionPendiente.horarioId,fechaClase:accionPendiente.fecha});
     if (res.ok) {
-      showMsg('conf-msg',`&#x2713; Est&aacute;s en posici&oacute;n #${res.posicion}. Te avisaremos si hay cupo.`,'success');
+      showMsg('conf-msg',`&#x2713; Estas en posicion #${res.posicion}. Te avisaremos si hay cupo.`,'success');
       accionPendiente = null;
       btn.textContent='Cerrar';
       btn.disabled=false;
@@ -1120,7 +1120,7 @@ async function abrirMisReservas() {
 
   const res = await api('getMisReservas', {clienteId: usuario.id});
   if (!res.ok || !res.reservas.length) {
-    c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x1F4C5;</div><p>No ten&eacute;s reservas pr&oacute;ximas</p></div>';
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x1F4C5;</div><p>No tenes reservas proximas</p></div>';
     return;
   }
 
@@ -1129,7 +1129,7 @@ async function abrirMisReservas() {
     fecha_clase: normFechaFE(r.fecha_clase)
   }));
 
-  // Mostrar navegaci&oacute;n y calendario
+  // Mostrar navegacion y calendario
   document.getElementById('cal-nav').style.display = 'flex';
   document.getElementById('cal-grid').style.display = 'block';
 
@@ -1148,34 +1148,34 @@ function calCambiarMes(delta) {
 
 function renderCalendario() {
   const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const a&ntilde;o = _calMes.getFullYear();
+  const ano = _calMes.getFullYear();
   const mes = _calMes.getMonth();
   const MESES_L = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-  document.getElementById('cal-titulo').textContent = `${MESES_L[mes]} ${a&ntilde;o}`;
+  document.getElementById('cal-titulo').textContent = `${MESES_L[mes]} ${ano}`;
 
   // Fechas reservadas de este mes
   const reservadasMes = new Set(
     _misReservas
-      .filter(r => { const d = new Date(r.fecha_clase+'T00:00:00'); return d.getMonth()===mes && d.getFullYear()===a&ntilde;o; })
+      .filter(r => { const d = new Date(r.fecha_clase+'T00:00:00'); return d.getMonth()===mes && d.getFullYear()===ano; })
       .map(r => r.fecha_clase)
   );
 
-  // Primer d&iacute;a del mes (0=Dom, ajustar a Lun)
-  const primerDia = new Date(a&ntilde;o, mes, 1).getDay();
+  // Primer dia del mes (0=Dom, ajustar a Lun)
+  const primerDia = new Date(ano, mes, 1).getDay();
   const offset = primerDia === 0 ? 6 : primerDia - 1; // lunes primero
-  const diasEnMes = new Date(a&ntilde;o, mes + 1, 0).getDate();
+  const diasEnMes = new Date(ano, mes + 1, 0).getDate();
 
   let html = '<div class="cal-grid">';
   // Headers
   ['Lu','Ma','Mi','Ju','Vi','Sa','Do'].forEach(d => {
     html += `<div class="cal-dia-header">${d}</div>`;
   });
-  // Vac&iacute;os inicio
+  // Vacios inicio
   for (let i = 0; i < offset; i++) html += '<div class="cal-dia vacio"></div>';
-  // D&iacute;as
+  // Dias
   for (let dia = 1; dia <= diasEnMes; dia++) {
-    const fecha = `${a&ntilde;o}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+    const fecha = `${ano}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
     const fechaDate = new Date(fecha + 'T00:00:00');
     const esHoy = fechaDate.getTime() === hoy.getTime();
     const esReservado = reservadasMes.has(fecha);
@@ -1214,7 +1214,7 @@ function calDiaClick(fecha) {
 
 function renderListaReservas() {
   const c = document.getElementById('mis-reservas-content');
-  const fmtHoraUI = t => { if(!t) return '&mdash;'; const p=String(t).split(':'); return p[0].padStart(2,'0')+':'+(p[1]||'00'); };
+  const fmtHoraUI = t => { if(!t) return '-'; const p=String(t).split(':'); return p[0].padStart(2,'0')+':'+(p[1]||'00'); };
 
   // Agrupar por mes
   let htmlPorMes = '';
@@ -1232,7 +1232,7 @@ function renderListaReservas() {
     htmlPorMes += `<div class="reserva-item" data-fecha="${r.fecha_clase}" style="padding:12px 14px">
       <div class="reserva-info">
         <div class="r-fecha">${DIAS[d.getDay()]} ${d.getDate()} ${MESES_SHORT[d.getMonth()]}</div>
-        <div class="r-clase" style="font-size:13px">${h ? fmtHoraUI(h.hora) + ' &middot; ' + h.dia : '&mdash;'}</div>
+        <div class="r-clase" style="font-size:13px">${h ? fmtHoraUI(h.hora) + ' . ' + h.dia : '-'}</div>
         <div class="r-inst">${h ? h.instructor : ''}</div>
       </div>
       ${r.estado==='activa'
@@ -1245,7 +1245,7 @@ function renderListaReservas() {
 }
 
 async function cancelarReserva(reservaId) {
-  if (!confirm('&iquest;Segura que quer&eacute;s cancelar esta reserva?')) return;
+  if (!confirm('?Segura que queres cancelar esta reserva?')) return;
   const res=await api('cancelarReserva',{reservaId,clienteId:usuario.id});
   if (res.ok) { abrirMisReservas(); cargarHorarios(); }
   else alert(res.error);
