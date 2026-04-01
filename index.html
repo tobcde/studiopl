@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio PL â€” ReservÃ¡ tu clase</title>
+  <title>Studio PL &#8212; Reserv&#225; tu clase</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
     .hdr-btn.solid:hover { background: var(--gold-light); }
     #btn-logout { background: none; border: none; color: var(--muted); font-size: 10px; letter-spacing: 1px; cursor: pointer; text-decoration: underline; font-family: 'Montserrat', sans-serif; white-space: nowrap; }
     #user-name { color: var(--gold-light); font-size: 12px; letter-spacing: 1px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    /* MenÃº desplegable mobile */
+    /* Men&#250; desplegable mobile */
     #user-menu { position: relative; }
     #user-menu-btn { background: none; border: 1px solid var(--gold); color: var(--gold-light); padding: 7px 12px; font-size: 18px; cursor: pointer; line-height: 1; display: none; }
     #user-menu-panel { display: none; position: absolute; top: calc(100% + 8px); right: 0; background: var(--dark); border: 1px solid var(--border); min-width: 180px; z-index: 500; flex-direction: column; }
@@ -106,14 +106,14 @@
     .cal-dia.reservado:hover { background:var(--gold);color:var(--dark); }
     .cal-dia.pasado { opacity:.35; }
 
-    /* â”€â”€ TABLET: 2 columnas â”€â”€ */
+    /* &#9472;&#9472; TABLET: 2 columnas &#9472;&#9472; */
     @media (max-width: 900px) {
       .clases-grid { grid-template-columns: repeat(2, 1fr); padding: 0 24px 60px; gap: 16px; }
       .hero { padding: 44px 24px 30px; }
       .filters { padding: 0 24px 20px; }
     }
 
-    /* â”€â”€ MOBILE: 1 columna â”€â”€ */
+    /* &#9472;&#9472; MOBILE: 1 columna &#9472;&#9472; */
     @media (max-width: 640px) {
       /* Header */
       header { padding: 0 16px; height: 60px; }
@@ -214,7 +214,7 @@
       .clases-grid { padding: 0 12px 60px; }
       header { padding: 0 12px; }
     }
-    /* BANNER CRÃ‰DITOS */
+    /* BANNER CR&#201;DITOS */
     #creditos-banner { display:none; align-items:center; justify-content:space-between; background:var(--dark); border-bottom:1px solid rgba(201,169,110,0.2); padding:10px 40px; font-size:11px; letter-spacing:1px; }
     .cr-plan { color:var(--muted); text-transform:uppercase; letter-spacing:2px; }
     .cr-val { color:var(--gold); font-weight:500; }
@@ -250,15 +250,15 @@
       <!-- Botones desktop -->
       <button class="hdr-btn hdr-desktop" onclick="abrirMisReservas()">Mis reservas</button>
       <button class="hdr-btn hdr-desktop" onclick="abrirMisDatos()">Mis datos</button>
-      <button class="hdr-btn hdr-desktop" onclick="abrirModal('modal-password')" title="Cambiar contraseÃ±a">ðŸ”‘</button>
+      <button class="hdr-btn hdr-desktop" onclick="abrirModal('modal-password')" title="Cambiar contrase&#241;a">&#128273;</button>
       <button id="btn-logout" class="hdr-desktop" onclick="logout()">Salir</button>
-      <!-- MenÃº mobile -->
+      <!-- Men&#250; mobile -->
       <div id="user-menu">
-        <button id="user-menu-btn" onclick="toggleUserMenu()">â˜°</button>
+        <button id="user-menu-btn" onclick="toggleUserMenu()">&#9776;</button>
         <div id="user-menu-panel">
-          <button onclick="closeUserMenu();abrirMisReservas()">ðŸ“… Mis reservas</button>
-          <button onclick="closeUserMenu();abrirMisDatos()">ðŸ‘¤ Mis datos</button>
-          <button onclick="closeUserMenu();abrirModal('modal-password')">ðŸ”‘ ContraseÃ±a</button>
+          <button onclick="closeUserMenu();abrirMisReservas()">&#128197; Mis reservas</button>
+          <button onclick="closeUserMenu();abrirMisDatos()">&#128100; Mis datos</button>
+          <button onclick="closeUserMenu();abrirModal('modal-password')">&#128273; Contrase&#241;a</button>
           <button onclick="closeUserMenu();logout()">Salir</button>
         </div>
       </div>
@@ -266,26 +266,26 @@
   </div>
 </header>
 
-<!-- BANNER CRÃ‰DITOS (visible solo cuando hay sesiÃ³n y tiene abono) -->
+<!-- BANNER CR&#201;DITOS (visible solo cuando hay sesi&#243;n y tiene abono) -->
 <div id="creditos-banner">
   <span class="cr-plan">Cargando plan...</span>
   <span class="cr-val"></span>
 </div>
 
 <section class="hero">
-  <p class="hero-eyebrow">ReservÃ¡ tu lugar</p>
-  <h1>EncontrÃ¡ <em>tu clase</em><br>perfecta</h1>
-  <p>ElegÃ­ el horario que mejor se adapte a tu rutina y reservÃ¡ tu lugar en pocos pasos.</p>
+  <p class="hero-eyebrow">Reserv&#225; tu lugar</p>
+  <h1>Encontr&#225; <em>tu clase</em><br>perfecta</h1>
+  <p>Eleg&#237; el horario que mejor se adapte a tu rutina y reserv&#225; tu lugar en pocos pasos.</p>
 </section>
 
 <div class="filters">
   <button class="filter-btn active" onclick="filtrar('todos',this)">Todos</button>
   <button class="filter-btn" onclick="filtrar('Lunes',this)">Lunes</button>
   <button class="filter-btn" onclick="filtrar('Martes',this)">Martes</button>
-  <button class="filter-btn" onclick="filtrar('MiÃ©rcoles',this)">MiÃ©rcoles</button>
+  <button class="filter-btn" onclick="filtrar('Mi&#233;rcoles',this)">Mi&#233;rcoles</button>
   <button class="filter-btn" onclick="filtrar('Jueves',this)">Jueves</button>
   <button class="filter-btn" onclick="filtrar('Viernes',this)">Viernes</button>
-  <button class="filter-btn" onclick="filtrar('SÃ¡bado',this)">SÃ¡bado</button>
+  <button class="filter-btn" onclick="filtrar('S&#225;bado',this)">S&#225;bado</button>
 </div>
 
 <main class="clases-grid" id="clases-grid">
@@ -297,7 +297,7 @@
   <div class="modal">
     <div class="modal-header">
       <h2 class="modal-title">Ingresar</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-login')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-login')">&#10005;</button>
     </div>
 
     <!-- Paso 1: DNI -->
@@ -311,26 +311,26 @@
       <button class="btn-primary" onclick="checkLoginMethod()">Continuar</button>
     </div>
 
-    <!-- Paso 2a: contraseÃ±a -->
+    <!-- Paso 2a: contrase&#241;a -->
     <div id="login-s2a" style="display:none">
       <div id="login-msg2a"></div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:20px">IngresÃ¡ tu contraseÃ±a.</p>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Ingres&#225; tu contrase&#241;a.</p>
       <div class="form-group" style="position:relative">
-        <label>ContraseÃ±a</label>
-        <input type="password" id="login-password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" onkeydown="if(event.key==='Enter')doLoginConPassword()">
+        <label>Contrase&#241;a</label>
+        <input type="password" id="login-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" onkeydown="if(event.key==='Enter')doLoginConPassword()">
         <button onclick="togglePass('login-password')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
       </div>
       <button class="btn-primary" onclick="doLoginConPassword()">Ingresar</button>
-      <button class="btn-secondary" style="margin-top:10px" onclick="usarCodigo()">Prefiero usar cÃ³digo por email</button>
-      <button class="btn-secondary" style="margin-top:8px;color:var(--gold);border-color:transparent" onclick="olvideMiPassword()">OlvidÃ© mi contraseÃ±a</button>
+      <button class="btn-secondary" style="margin-top:10px" onclick="usarCodigo()">Prefiero usar c&#243;digo por email</button>
+      <button class="btn-secondary" style="margin-top:8px;color:var(--gold);border-color:transparent" onclick="olvideMiPassword()">Olvid&#233; mi contrase&#241;a</button>
     </div>
 
-    <!-- Paso 2b: cÃ³digo -->
+    <!-- Paso 2b: c&#243;digo -->
     <div id="login-s2b" style="display:none">
       <div id="login-msg2b"></div>
-      <p id="login-email-hint" style="font-size:13px;color:var(--muted);margin-bottom:20px">Enviamos un cÃ³digo de 6 dÃ­gitos a tu email.</p>
+      <p id="login-email-hint" style="font-size:13px;color:var(--muted);margin-bottom:20px">Enviamos un c&#243;digo de 6 d&#237;gitos a tu email.</p>
       <div class="form-group">
-        <label>CÃ³digo</label>
+        <label>C&#243;digo</label>
         <input type="text" id="login-codigo" placeholder="000000" maxlength="6"
           style="letter-spacing:6px;font-size:20px;text-align:center"
           onkeydown="if(event.key==='Enter')verificarCodigo()">
@@ -341,9 +341,9 @@
 
     <!-- Paso 3: reset enviado -->
     <div id="login-s3" style="display:none;text-align:center;padding:10px 0">
-      <div style="font-size:32px;margin-bottom:12px">ðŸ“§</div>
-      <p style="font-size:14px;color:var(--dark);margin-bottom:8px">Te enviamos un link para resetear tu contraseÃ±a.</p>
-      <p style="font-size:12px;color:var(--muted)">RevisÃ¡ tu email y seguÃ­ las instrucciones.</p>
+      <div style="font-size:32px;margin-bottom:12px">&#128231;</div>
+      <p style="font-size:14px;color:var(--dark);margin-bottom:8px">Te enviamos un link para resetear tu contrase&#241;a.</p>
+      <p style="font-size:12px;color:var(--muted)">Revis&#225; tu email y segu&#237; las instrucciones.</p>
       <button class="btn-secondary" style="margin-top:20px" onclick="volverLoginDni()">Volver</button>
     </div>
   </div>
@@ -354,13 +354,13 @@
   <div class="modal">
     <div class="modal-header">
       <h2 class="modal-title">Mis datos</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-mis-datos')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-mis-datos')">&#10005;</button>
     </div>
     <div id="mis-datos-msg"></div>
 
     <div style="background:#f9f6f2;border:1px solid var(--border);padding:12px 16px;margin-bottom:20px;font-size:11px;color:var(--muted);line-height:1.6">
-      Tu <strong>DNI</strong> es tu identificador Ãºnico y no se puede modificar.<br>
-      PodÃ©s actualizar tu nombre, email, telÃ©fono y fecha de nacimiento.
+      Tu <strong>DNI</strong> es tu identificador &#250;nico y no se puede modificar.<br>
+      Pod&#233;s actualizar tu nombre, email, tel&#233;fono y fecha de nacimiento.
     </div>
 
     <div class="form-group">
@@ -374,10 +374,10 @@
     <div class="form-group">
       <label>Email</label>
       <input type="email" id="md-email" placeholder="tu@email.com">
-      <small style="color:var(--muted);font-size:10px;margin-top:4px;display:block">Usamos este email para enviarte cÃ³digos de acceso y confirmaciones.</small>
+      <small style="color:var(--muted);font-size:10px;margin-top:4px;display:block">Usamos este email para enviarte c&#243;digos de acceso y confirmaciones.</small>
     </div>
     <div class="form-group">
-      <label>TelÃ©fono</label>
+      <label>Tel&#233;fono</label>
       <input type="tel" id="md-telefono" placeholder="Ej: 1155667788">
     </div>
 
@@ -388,28 +388,28 @@
   </div>
 </div>
 
-<!-- MODAL CAMBIAR CONTRASEÃ‘A -->
+<!-- MODAL CAMBIAR CONTRASE&#209;A -->
 <div class="modal-overlay" id="modal-password">
   <div class="modal">
     <div class="modal-header">
-      <h2 class="modal-title">Mi contraseÃ±a</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-password')">âœ•</button>
+      <h2 class="modal-title">Mi contrase&#241;a</h2>
+      <button class="modal-close" onclick="cerrarModal('modal-password')">&#10005;</button>
     </div>
     <div id="pass-msg"></div>
     <p style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">
-      ConfigurÃ¡ una contraseÃ±a para ingresar mÃ¡s rÃ¡pido sin necesitar el cÃ³digo por email.
+      Configur&#225; una contrase&#241;a para ingresar m&#225;s r&#225;pido sin necesitar el c&#243;digo por email.
     </p>
     <div class="form-group" style="position:relative">
-      <label>Nueva contraseÃ±a</label>
-      <input type="password" id="pass-nueva" placeholder="MÃ­nimo 6 caracteres">
+      <label>Nueva contrase&#241;a</label>
+      <input type="password" id="pass-nueva" placeholder="M&#237;nimo 6 caracteres">
       <button onclick="togglePass('pass-nueva')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
     </div>
     <div class="form-group" style="position:relative">
-      <label>Confirmar contraseÃ±a</label>
-      <input type="password" id="pass-confirmar" placeholder="RepetÃ­ la contraseÃ±a">
+      <label>Confirmar contrase&#241;a</label>
+      <input type="password" id="pass-confirmar" placeholder="Repet&#237; la contrase&#241;a">
       <button onclick="togglePass('pass-confirmar')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
     </div>
-    <button class="btn-primary" onclick="guardarPassword()">Guardar contraseÃ±a</button>
+    <button class="btn-primary" onclick="guardarPassword()">Guardar contrase&#241;a</button>
     <button class="btn-secondary" style="margin-top:10px" onclick="cerrarModal('modal-password')">Cancelar</button>
   </div>
 </div>
@@ -420,9 +420,9 @@
     <div class="modal-header" style="position:sticky;top:0;background:var(--white);z-index:1;padding-bottom:16px;margin-bottom:0">
       <div>
         <h2 class="modal-title">Crear cuenta</h2>
-        <p style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:4px">FICHA DE INSCRIPCIÃ“N Â· STUDIO PL</p>
+        <p style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:4px">FICHA DE INSCRIPCI&#211;N &#183; STUDIO PL</p>
       </div>
-      <button class="modal-close" onclick="cerrarModal('modal-registro')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-registro')">&#10005;</button>
     </div>
 
     <div id="reg-msg"></div>
@@ -435,39 +435,39 @@
       <div class="form-group"><label>DNI *</label><input type="text" id="reg-dni" placeholder="Sin puntos ni espacios" inputmode="numeric" style="letter-spacing:2px"></div>
       <div class="form-group"><label>Email *</label><input type="email" id="reg-email" placeholder="tu@email.com"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-        <div class="form-group"><label>TelÃ©fono *</label><input type="tel" id="reg-tel" placeholder="+54 11 ..."></div>
+        <div class="form-group"><label>Tel&#233;fono *</label><input type="tel" id="reg-tel" placeholder="+54 11 ..."></div>
         <div class="form-group"><label>Edad *</label><input type="number" id="reg-edad" placeholder="Ej: 28" min="10" max="99"></div>
       </div>
       <div class="form-group"><label>Fecha de nacimiento *</label><input type="date" id="reg-fnac"></div>
 
       <p style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:24px 0 12px">Cuestionario PAR-Q</p>
       <div style="background:var(--cream);border-left:3px solid var(--border);padding:14px 18px;font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px">
-        Responder con honestidad. Si respondÃ©s <strong>SÃ</strong> a alguna pregunta, debÃ©s consultar a un mÃ©dico antes de comenzar.
+        Responder con honestidad. Si respond&#233;s <strong>S&#205;</strong> a alguna pregunta, deb&#233;s consultar a un m&#233;dico antes de comenzar.
       </div>
 
-      <!-- PatologÃ­as -->
+      <!-- Patolog&#237;as -->
       <div class="form-group">
-        <label>Â¿Padece alguna patologÃ­a?</label>
+        <label>&#191;Padece alguna patolog&#237;a?</label>
         <div class="check-group">
           <label class="check-opt"><input type="checkbox" name="patologia" value="Diabetes"> Diabetes</label>
-          <label class="check-opt"><input type="checkbox" name="patologia" value="HipertensiÃ³n"> HipertensiÃ³n</label>
+          <label class="check-opt"><input type="checkbox" name="patologia" value="Hipertensi&#243;n"> Hipertensi&#243;n</label>
           <label class="check-opt"><input type="checkbox" name="patologia" value="Otra"><input type="text" id="patologia-otra" placeholder="Especificar..." style="margin-left:6px;border:none;border-bottom:1px solid var(--border);background:transparent;font-size:12px;width:140px;outline:none"></label>
         </div>
       </div>
 
-      <!-- PAR-Q SÃ­/No -->
-      <div class="par-q-item"><label>Â¿Alguna vez un mÃ©dico le indicÃ³ que tiene un problema cardÃ­aco y que solo debe realizar actividad fÃ­sica recomendada por un profesional? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq1" value="SÃ­" required> SÃ­</label><label class="yn-opt"><input type="radio" name="parq1" value="No"> No</label></div></div>
-      <div class="par-q-item"><label>Â¿Siente dolor en el pecho cuando realiza actividad fÃ­sica? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq2" value="SÃ­" required> SÃ­</label><label class="yn-opt"><input type="radio" name="parq2" value="No"> No</label></div></div>
-      <div class="par-q-item"><label>Â¿Ha sentido dolor en el pecho en reposo durante el Ãºltimo mes? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq3" value="SÃ­" required> SÃ­</label><label class="yn-opt"><input type="radio" name="parq3" value="No"> No</label></div></div>
-      <div class="par-q-item"><label>Â¿Ha perdido el equilibrio por mareos o ha perdido el conocimiento alguna vez? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq4" value="SÃ­" required> SÃ­</label><label class="yn-opt"><input type="radio" name="parq4" value="No"> No</label></div></div>
-      <div class="par-q-item"><label>Â¿Tiene algÃºn problema Ã³seo o articular que pueda empeorar con el ejercicio? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq5" value="SÃ­" required> SÃ­</label><label class="yn-opt"><input type="radio" name="parq5" value="No"> No</label></div></div>
-      <div class="form-group" style="margin-top:-4px"><label style="font-style:italic;font-size:10px">Si respondiste SÃ­ arriba, Â¿cuÃ¡l o cuÃ¡les?</label><input type="text" id="parq5-cual" placeholder="Ej: columna, rodilla..."></div>
-      <div class="par-q-item"><label>Â¿Su mÃ©dico le ha indicado tomar medicaciÃ³n para la presiÃ³n arterial o para el corazÃ³n? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq6" value="SÃ­" required> SÃ­</label><label class="yn-opt"><input type="radio" name="parq6" value="No"> No</label></div></div>
-      <div class="form-group"><label>Â¿Sabe de alguna otra razÃ³n por la cual no deberÃ­a realizar actividad fÃ­sica?</label><input type="text" id="parq-otra-razon" placeholder="Opcional..."></div>
+      <!-- PAR-Q S&#237;/No -->
+      <div class="par-q-item"><label>&#191;Alguna vez un m&#233;dico le indic&#243; que tiene un problema card&#237;aco y que solo debe realizar actividad f&#237;sica recomendada por un profesional? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq1" value="S&#237;" required> S&#237;</label><label class="yn-opt"><input type="radio" name="parq1" value="No"> No</label></div></div>
+      <div class="par-q-item"><label>&#191;Siente dolor en el pecho cuando realiza actividad f&#237;sica? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq2" value="S&#237;" required> S&#237;</label><label class="yn-opt"><input type="radio" name="parq2" value="No"> No</label></div></div>
+      <div class="par-q-item"><label>&#191;Ha sentido dolor en el pecho en reposo durante el &#250;ltimo mes? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq3" value="S&#237;" required> S&#237;</label><label class="yn-opt"><input type="radio" name="parq3" value="No"> No</label></div></div>
+      <div class="par-q-item"><label>&#191;Ha perdido el equilibrio por mareos o ha perdido el conocimiento alguna vez? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq4" value="S&#237;" required> S&#237;</label><label class="yn-opt"><input type="radio" name="parq4" value="No"> No</label></div></div>
+      <div class="par-q-item"><label>&#191;Tiene alg&#250;n problema &#243;seo o articular que pueda empeorar con el ejercicio? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq5" value="S&#237;" required> S&#237;</label><label class="yn-opt"><input type="radio" name="parq5" value="No"> No</label></div></div>
+      <div class="form-group" style="margin-top:-4px"><label style="font-style:italic;font-size:10px">Si respondiste S&#237; arriba, &#191;cu&#225;l o cu&#225;les?</label><input type="text" id="parq5-cual" placeholder="Ej: columna, rodilla..."></div>
+      <div class="par-q-item"><label>&#191;Su m&#233;dico le ha indicado tomar medicaci&#243;n para la presi&#243;n arterial o para el coraz&#243;n? *</label><div class="yn-group"><label class="yn-opt"><input type="radio" name="parq6" value="S&#237;" required> S&#237;</label><label class="yn-opt"><input type="radio" name="parq6" value="No"> No</label></div></div>
+      <div class="form-group"><label>&#191;Sabe de alguna otra raz&#243;n por la cual no deber&#237;a realizar actividad f&#237;sica?</label><input type="text" id="parq-otra-razon" placeholder="Opcional..."></div>
 
       <!-- Lesiones -->
       <div class="form-group">
-        <label>Â¿Tuviste alguna lesiÃ³n en los Ãºltimos 6 meses? *</label>
+        <label>&#191;Tuviste alguna lesi&#243;n en los &#250;ltimos 6 meses? *</label>
         <div class="check-group">
           <label class="check-opt"><input type="checkbox" name="lesion" value="Contractura muscular"> Contractura muscular</label>
           <label class="check-opt"><input type="checkbox" name="lesion" value="Desgarro"> Desgarro</label>
@@ -477,18 +477,18 @@
           <label class="check-opt"><input type="checkbox" name="lesion" value="Tendinitis de hombro"> Tendinitis de hombro</label>
           <label class="check-opt"><input type="checkbox" name="lesion" value="Manguito rotador"> Manguito rotador</label>
           <label class="check-opt"><input type="checkbox" name="lesion" value="Fractura reciente"> Fractura reciente</label>
-          <label class="check-opt"><input type="checkbox" name="lesion" value="CirugÃ­a reciente"> CirugÃ­a reciente</label>
+          <label class="check-opt"><input type="checkbox" name="lesion" value="Cirug&#237;a reciente"> Cirug&#237;a reciente</label>
           <label class="check-opt"><input type="checkbox" name="lesion" value="Ninguna" id="lesion-ninguna"> Ninguna</label>
           <label class="check-opt"><input type="checkbox" name="lesion" value="Otra"><input type="text" id="lesion-otra" placeholder="Especificar..." style="margin-left:6px;border:none;border-bottom:1px solid var(--border);background:transparent;font-size:12px;width:140px;outline:none"></label>
         </div>
       </div>
 
-      <!-- DeclaraciÃ³n -->
+      <!-- Declaraci&#243;n -->
       <div style="background:var(--cream);border:1px solid var(--border);padding:14px 18px;font-size:11px;color:var(--muted);line-height:1.7;margin:16px 0">
-        <strong style="color:var(--dark)">DECLARACIÃ“N</strong><br>
-        Declaro que la informaciÃ³n proporcionada es verdadera y completa. Entiendo que si respondÃ­ SÃ a alguna pregunta, debo consultar con un mÃ©dico antes de comenzar actividad fÃ­sica.
+        <strong style="color:var(--dark)">DECLARACI&#211;N</strong><br>
+        Declaro que la informaci&#243;n proporcionada es verdadera y completa. Entiendo que si respond&#237; S&#205; a alguna pregunta, debo consultar con un m&#233;dico antes de comenzar actividad f&#237;sica.
       </div>
-      <label class="check-opt" style="margin-bottom:20px"><input type="checkbox" id="reg-acepta" required> Acepto la declaraciÃ³n y autorizo el uso de mis datos *</label>
+      <label class="check-opt" style="margin-bottom:20px"><input type="checkbox" id="reg-acepta" required> Acepto la declaraci&#243;n y autorizo el uso de mis datos *</label>
 
       <button class="btn-primary" onclick="registrarse()">Crear cuenta</button>
     </div>
@@ -500,13 +500,13 @@
   <div class="modal" style="max-width:440px;padding:28px 28px 24px;max-height:90vh;overflow-y:auto">
     <div class="modal-header">
       <h2 class="modal-title">Mis reservas</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-mis-reservas')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-mis-reservas')">&#10005;</button>
     </div>
-    <!-- NavegaciÃ³n del calendario -->
+    <!-- Navegaci&#243;n del calendario -->
     <div id="cal-nav" style="display:none;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <button onclick="calCambiarMes(-1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1">â€¹</button>
+      <button onclick="calCambiarMes(-1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1">&#8249;</button>
       <span id="cal-titulo" style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--dark)"></span>
-      <button onclick="calCambiarMes(1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1">â€º</button>
+      <button onclick="calCambiarMes(1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1">&#8250;</button>
     </div>
     <!-- Calendario -->
     <div id="cal-grid" style="display:none;margin-bottom:14px"></div>
@@ -520,7 +520,7 @@
   <div class="modal">
     <div class="modal-header">
       <h2 class="modal-title" id="conf-titulo">Confirmar reserva</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-confirmar')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-confirmar')">&#10005;</button>
     </div>
     <div id="conf-msg"></div>
     <div id="conf-detalle" style="background:var(--cream);padding:20px;margin-bottom:24px;border-left:3px solid var(--gold)"></div>
@@ -529,25 +529,25 @@
   </div>
 </div>
 
-<!-- MODAL RESET CONTRASEÃ‘A (se abre cuando llega desde el link del email) -->
+<!-- MODAL RESET CONTRASE&#209;A (se abre cuando llega desde el link del email) -->
 <div class="modal-overlay" id="modal-reset">
   <div class="modal">
     <div class="modal-header">
-      <h2 class="modal-title">Nueva contraseÃ±a</h2>
+      <h2 class="modal-title">Nueva contrase&#241;a</h2>
     </div>
     <div id="reset-msg"></div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:20px">ElegÃ­ una nueva contraseÃ±a para tu cuenta.</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:20px">Eleg&#237; una nueva contrase&#241;a para tu cuenta.</p>
     <div class="form-group" style="position:relative">
-      <label>Nueva contraseÃ±a</label>
-      <input type="password" id="reset-pass1" placeholder="MÃ­nimo 6 caracteres">
+      <label>Nueva contrase&#241;a</label>
+      <input type="password" id="reset-pass1" placeholder="M&#237;nimo 6 caracteres">
       <button onclick="togglePass('reset-pass1')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
     </div>
     <div class="form-group" style="position:relative">
-      <label>Confirmar contraseÃ±a</label>
-      <input type="password" id="reset-pass2" placeholder="RepetÃ­ la contraseÃ±a">
+      <label>Confirmar contrase&#241;a</label>
+      <input type="password" id="reset-pass2" placeholder="Repet&#237; la contrase&#241;a">
       <button onclick="togglePass('reset-pass2')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
     </div>
-    <button class="btn-primary" onclick="confirmarReset()">Guardar nueva contraseÃ±a</button>
+    <button class="btn-primary" onclick="confirmarReset()">Guardar nueva contrase&#241;a</button>
   </div>
 </div>
 
@@ -562,12 +562,12 @@ let _resetToken = null;
 let _resetEmail = null;
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const MESES_SHORT = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-const DIAS = ['Domingo','Lunes','Martes','MiÃ©rcoles','Jueves','Viernes','SÃ¡bado'];
+const DIAS = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
 
 document.addEventListener('DOMContentLoaded', () => {
   actualizarUI();
   cargarHorarios();
-  // Detectar link de reset de contraseÃ±a
+  // Detectar link de reset de contrasena
   const params = new URLSearchParams(window.location.search);
   const token = params.get('reset_token');
   const email = params.get('email');
@@ -592,11 +592,11 @@ function actualizarBannerCreditos(info) {
   if (!info || !info.tipoAbono) { if (banner) banner.style.display='none'; return; }
   if (!banner) return;
   if (info.ilimitado) {
-    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val">âˆž clases</span>`;
+    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val">999 clases</span>`;
   } else {
     const rest = info.creditosRestantes;
     const color = rest===0?'#c0392b':rest<=1?'#c9a96e':'#6b8f71';
-    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val" style="color:${color}">${rest} crÃ©dito${rest!==1?'s':''} esta semana</span>`;
+    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val" style="color:${color}">${rest} credito${rest!==1?'s':''} esta semana</span>`;
   }
   banner.style.display = 'flex';
 }
@@ -631,7 +631,7 @@ function logout() { localStorage.removeItem('spl_user'); usuario=null; actualiza
 
 async function checkLoginMethod() {
   const dni = document.getElementById('login-dni').value.trim().replace(/\D/g,'');
-  if (!dni) return showMsg('login-msg','IngresÃ¡ tu DNI','error');
+  if (!dni) return showMsg('login-msg','Ingresa tu DNI','error');
   showMsg('login-msg','Verificando...','');
   const res = await api('checkDni', {dni});
   if (!res.ok) return showMsg('login-msg', res.error, 'error');
@@ -642,11 +642,11 @@ async function checkLoginMethod() {
     document.getElementById('login-s2a').style.display='block';
     document.getElementById('login-password').focus();
   } else {
-    // Sin contraseÃ±a â†’ mandar cÃ³digo al email del cliente
+    // Sin contrasena -> mandar codigo al email del cliente
     const r2 = await api('loginCliente', {dni});
     if (r2.ok) {
       document.getElementById('login-s2b').style.display='block';
-      if (r2.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un cÃ³digo a ' + r2.emailMasked;
+      if (r2.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un codigo a ' + r2.emailMasked;
       document.getElementById('login-codigo').focus();
     } else {
       document.getElementById('login-s1').style.display='block';
@@ -658,7 +658,7 @@ async function checkLoginMethod() {
 async function doLoginConPassword() {
   const dni = window._loginDni;
   const password = document.getElementById('login-password').value;
-  if (!password) return showMsg('login-msg2a','IngresÃ¡ tu contraseÃ±a','error');
+  if (!password) return showMsg('login-msg2a','Ingresa tu contrasena','error');
   showMsg('login-msg2a','Verificando...','');
   const res = await api('loginConPassword', {dni, password});
   if (res.ok) {
@@ -679,7 +679,7 @@ async function usarCodigo() {
   const res = await api('loginCliente', {dni});
   if (res.ok) {
     document.getElementById('login-s2b').style.display='block';
-    if (res.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un cÃ³digo a ' + res.emailMasked;
+    if (res.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un codigo a ' + res.emailMasked;
     document.getElementById('login-codigo').focus();
   } else {
     document.getElementById('login-s2a').style.display='block';
@@ -699,7 +699,7 @@ async function olvideMiPassword() {
     document.getElementById('login-s3').style.display='block';
   } else {
     document.getElementById('login-s2a').style.display='block';
-    showMsg('login-msg2a', 'No se pudo enviar el reset. ContactÃ¡ al studio.', 'error');
+    showMsg('login-msg2a', 'No se pudo enviar el reset. Contacta al studio.', 'error');
   }
 }
 
@@ -715,7 +715,7 @@ function volverLoginDni() {
 async function verificarCodigo() {
   const dni = window._loginDni;
   const codigo = document.getElementById('login-codigo').value.trim();
-  if (!codigo || codigo.length !== 6) return showMsg('login-msg2b','IngresÃ¡ el cÃ³digo de 6 dÃ­gitos','error');
+  if (!codigo || codigo.length !== 6) return showMsg('login-msg2b','Ingresa el codigo de 6 digitos','error');
   showMsg('login-msg2b','Verificando...','');
   const res = await api('verificarCodigo', {dni, codigo});
   if (res.ok) {
@@ -729,14 +729,14 @@ async function verificarCodigo() {
   }
 }
 
-// â”€â”€ MIS DATOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// &#9472;&#9472; MIS DATOS &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
 async function abrirMisDatos() {
   if (!usuario) return;
   document.getElementById('mis-datos-msg').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   abrirModal('modal-mis-datos');
   const res = await api('getClientePerfil', {clienteId: usuario.id});
   const c = res?.ok ? res.cliente : usuario;
-  document.getElementById('md-dni').value = c.dni || 'â€”';
+  document.getElementById('md-dni').value = c.dni || '-';
   document.getElementById('md-nombre').value = c.nombre || '';
   document.getElementById('md-email').value = c.email || '';
   document.getElementById('md-telefono').value = c.telefono || '';
@@ -748,7 +748,7 @@ async function guardarMisDatos() {
   const email = document.getElementById('md-email').value.trim();
   const telefono = document.getElementById('md-telefono').value.trim();
   if (!nombre) return showMsg('mis-datos-msg','El nombre es obligatorio','error');
-  if (!email || !email.includes('@')) return showMsg('mis-datos-msg','Email invÃ¡lido','error');
+  if (!email || !email.includes('@')) return showMsg('mis-datos-msg','Email invalido','error');
   showMsg('mis-datos-msg','Guardando...','');
   const res = await api('editarPerfil', {clienteId: usuario.id, nombre, email, telefono});
   if (res.ok) {
@@ -757,14 +757,14 @@ async function guardarMisDatos() {
     usuario.email = email;
     localStorage.setItem('spl_user', JSON.stringify(usuario));
     document.getElementById('user-name').textContent = nombre;
-    showMsg('mis-datos-msg','âœ“ Datos actualizados correctamente','success');
+    showMsg('mis-datos-msg','&#10003; Datos actualizados correctamente','success');
     setTimeout(() => cerrarModal('modal-mis-datos'), 1800);
   } else {
     showMsg('mis-datos-msg', res.error || 'Error al guardar', 'error');
   }
 }
 
-// â”€â”€ CONTRASEÃ‘A â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// &#9472;&#9472; CONTRASENA &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
 function togglePass(id) {
   const el = document.getElementById(id);
   el.type = el.type==='password' ? 'text' : 'password';
@@ -774,12 +774,12 @@ async function guardarPassword() {
   if (!usuario) return;
   const nueva     = document.getElementById('pass-nueva').value;
   const confirmar = document.getElementById('pass-confirmar').value;
-  if (!nueva || nueva.length < 6) return showMsg('pass-msg','La contraseÃ±a debe tener al menos 6 caracteres','error');
-  if (nueva !== confirmar) return showMsg('pass-msg','Las contraseÃ±as no coinciden','error');
+  if (!nueva || nueva.length < 6) return showMsg('pass-msg','La contrasena debe tener al menos 6 caracteres','error');
+  if (nueva !== confirmar) return showMsg('pass-msg','Las contrasenas no coinciden','error');
   showMsg('pass-msg','Guardando...','');
   const res = await api('setPassword', {clienteId: usuario.id, password: nueva});
   if (res.ok) {
-    showMsg('pass-msg','Â¡ContraseÃ±a guardada! Ya podÃ©s usarla para ingresar.','success');
+    showMsg('pass-msg','!Contrasena guardada! Ya podes usarla para ingresar.','success');
     document.getElementById('pass-nueva').value='';
     document.getElementById('pass-confirmar').value='';
     setTimeout(()=>cerrarModal('modal-password'), 2000);
@@ -791,9 +791,9 @@ async function guardarPassword() {
 async function confirmarReset() {
   const pass1 = document.getElementById('reset-pass1').value;
   const pass2 = document.getElementById('reset-pass2').value;
-  if (!pass1 || pass1.length < 6) return showMsg('reset-msg','La contraseÃ±a debe tener al menos 6 caracteres','error');
-  if (pass1 !== pass2) return showMsg('reset-msg','Las contraseÃ±as no coinciden','error');
-  if (!_resetToken || !_resetEmail) return showMsg('reset-msg','Link invÃ¡lido, solicitÃ¡ uno nuevo','error');
+  if (!pass1 || pass1.length < 6) return showMsg('reset-msg','La contrasena debe tener al menos 6 caracteres','error');
+  if (pass1 !== pass2) return showMsg('reset-msg','Las contrasenas no coinciden','error');
+  if (!_resetToken || !_resetEmail) return showMsg('reset-msg','Link invalido, solicita uno nuevo','error');
   showMsg('reset-msg','Guardando...','');
   const res = await api('resetPasswordConfirm', {
     email: _resetEmail,
@@ -801,7 +801,7 @@ async function confirmarReset() {
     nuevaPassword: pass1
   });
   if (res.ok) {
-    showMsg('reset-msg','Â¡ContraseÃ±a actualizada! Ya podÃ©s ingresar.','success');
+    showMsg('reset-msg','!Contrasena actualizada! Ya podes ingresar.','success');
     _resetToken = null; _resetEmail = null;
     setTimeout(()=>{ cerrarModal('modal-reset'); abrirModal('modal-login'); }, 2000);
   } else {
@@ -818,27 +818,27 @@ async function registrarse() {
   const fnac    = document.getElementById('reg-fnac').value;
   const acepta  = document.getElementById('reg-acepta').checked;
 
-  // Validaciones bÃ¡sicas
+  // Validaciones basicas
   if (!nombre) return showMsg('reg-msg','El nombre es requerido','error');
-  if (!dni || dni.length < 7) return showMsg('reg-msg','IngresÃ¡ tu DNI (sin puntos ni espacios)','error');
+  if (!dni || dni.length < 7) return showMsg('reg-msg','Ingresa tu DNI (sin puntos ni espacios)','error');
   if (!email) return showMsg('reg-msg','El email es requerido','error');
-  if (!tel) return showMsg('reg-msg','El telÃ©fono es requerido','error');
+  if (!tel) return showMsg('reg-msg','El telefono es requerido','error');
   if (!edad) return showMsg('reg-msg','La edad es requerida','error');
   if (!fnac) return showMsg('reg-msg','La fecha de nacimiento es requerida','error');
-  if (!acepta) return showMsg('reg-msg','DebÃ©s aceptar la declaraciÃ³n para continuar','error');
+  if (!acepta) return showMsg('reg-msg','Debes aceptar la declaracion para continuar','error');
 
   // Validar PAR-Q (todos los obligatorios)
   const parqCampos = ['parq1','parq2','parq3','parq4','parq5','parq6'];
   for (const c of parqCampos) {
     if (!document.querySelector(`input[name="${c}"]:checked`))
-      return showMsg('reg-msg','Por favor respondÃ© todas las preguntas del cuestionario PAR-Q','error');
+      return showMsg('reg-msg','Por favor responde todas las preguntas del cuestionario PAR-Q','error');
   }
 
-  // Lesiones - al menos una opciÃ³n
+  // Lesiones - al menos una opcion
   const lesiones = [...document.querySelectorAll('input[name="lesion"]:checked')].map(i=>i.value);
-  if (!lesiones.length) return showMsg('reg-msg','IndicÃ¡ si tuviste alguna lesiÃ³n en los Ãºltimos 6 meses','error');
+  if (!lesiones.length) return showMsg('reg-msg','Indica si tuviste alguna lesion en los ultimos 6 meses','error');
 
-  // Recopilar patologÃ­as
+  // Recopilar patologias
   const patologias = [...document.querySelectorAll('input[name="patologia"]:checked')].map(i => {
     if (i.value === 'Otra') { const v = document.getElementById('patologia-otra').value.trim(); return v || 'Otra'; }
     return i.value;
@@ -868,7 +868,7 @@ async function registrarse() {
   showMsg('reg-msg','Registrando...','');
   const res = await api('registrarCliente', { nombre, dni, email, telefono: tel, parq: JSON.stringify(parq) });
   if (res.ok) {
-    showMsg('reg-msg','Â¡Cuenta creada! RevisÃ¡ tu email.','success');
+    showMsg('reg-msg','!Cuenta creada! Revisa tu email.','success');
     usuario = res.cliente;
     localStorage.setItem('spl_user', JSON.stringify(usuario));
     setTimeout(()=>{ cerrarModal('modal-registro'); actualizarUI(); cargarHorarios(); }, 1800);
@@ -898,7 +898,7 @@ async function cargarHorarios() {
   const res = await api('getHorarios', params);
   if (res.ok) {
     horariosData = res.horarios;
-    // Actualizar crÃ©ditos del usuario
+    // Actualizar creditos del usuario
     if (res.creditosInfo && usuario) {
       usuario.creditosRestantes = res.creditosInfo.creditosRestantes;
       usuario.ilimitado = res.creditosInfo.ilimitado;
@@ -920,7 +920,7 @@ function filtrar(dia, btn) {
 function renderHorarios() {
   const grid = document.getElementById('clases-grid');
   const filtrados = filtroActivo==='todos' ? horariosData : horariosData.filter(h=>h.dia===filtroActivo);
-  if (!filtrados.length) { grid.innerHTML='<div class="empty-state"><div class="empty-icon">ðŸ§˜</div><p>No hay clases disponibles</p></div>'; return; }
+  if (!filtrados.length) { grid.innerHTML='<div class="empty-state"><div class="empty-icon">&#129496;</div><p>No hay clases disponibles</p></div>'; return; }
   grid.innerHTML = filtrados.map(h=>renderCard(h)).join('');
 }
 
@@ -947,35 +947,35 @@ function renderCard(h) {
   let btn;
   if (usuario) {
     if (tieneReserva) {
-      const labelFijo = esFijo ? ' ðŸ“Œ Horario fijo' : '';
+      const labelFijo = esFijo ? ' &#128204; Horario fijo' : '';
       btn = `<div style="display:flex;gap:8px">
-        <button class="btn-reservar" style="background:var(--success,#5a8a6a);flex:1;cursor:default">âœ“ Reservado${labelFijo}</button>
-        <button class="btn-reservar" style="background:none;border:1px solid var(--muted);color:var(--muted);width:auto;padding:13px 16px" onclick="accionCancelar('${reservaId}')">âœ•</button>
+        <button class="btn-reservar" style="background:var(--success,#5a8a6a);flex:1;cursor:default">&#10003; Reservado${labelFijo}</button>
+        <button class="btn-reservar" style="background:none;border:1px solid var(--muted);color:var(--muted);width:auto;padding:13px 16px" onclick="accionCancelar('${reservaId}')">&#10005;</button>
       </div>`;
     } else if (postVenc) {
       // Fecha cae despues del vencimiento del abono
-      btn = `<button class="btn-reservar" style="background:none;border:1px solid #c09060;color:#c09060;cursor:default" onclick="avisarVencimiento()">âš  Renovar abono para reservar</button>`;
+      btn = `<button class="btn-reservar" style="background:none;border:1px solid #c09060;color:#c09060;cursor:default" onclick="avisarVencimiento()">&#9888; Renovar abono para reservar</button>`;
     } else if (esFijo) {
-      btn = `<button class="btn-reservar" style="background:var(--gold);color:var(--dark)" onclick="accionReservar('${h.id}','${selF}','${h.hora}','${h.instructor}')">ðŸ“Œ Confirmar horario fijo</button>`;
+      btn = `<button class="btn-reservar" style="background:var(--gold);color:var(--dark)" onclick="accionReservar('${h.id}','${selF}','${h.hora}','${h.instructor}')">&#128204; Confirmar horario fijo</button>`;
     } else if (lleno) {
       btn = `<button class="btn-reservar espera" onclick="accionEspera('${h.id}','${selF}')">Lista de espera (${fd.enEspera} esperando)</button>`;
     } else {
       btn = `<button class="btn-reservar" onclick="accionReservar('${h.id}','${selF}','${h.hora}','${h.instructor}')">Reservar lugar</button>`;
     }
   } else {
-    btn = `<button class="btn-reservar" onclick="abrirModal('modal-login')">IniciÃ¡ sesiÃ³n para reservar</button>`;
+    btn = `<button class="btn-reservar" onclick="abrirModal('modal-login')">Inicia sesion para reservar</button>`;
   }
 
-  const fijoTag = esFijo ? '<span style="font-size:9px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:4px">ðŸ“Œ Horario fijo</span>' : '';
+  const fijoTag = esFijo ? '<span style="font-size:9px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:4px">&#128204; Horario fijo</span>' : '';
   const vencTag = proximas.some(p=>p.postVencimiento) ? '<div style="font-size:10px;color:#c09060;margin-bottom:6px">* Fecha fuera de tu abono actual</div>' : '';
 
   return `<div class="clase-card">
     ${fijoTag}
     <div class="clase-dia">${h.dia}</div>
     <div class="clase-hora">${h.hora}</div>
-    <div class="clase-instructor">${h.instructor} Â· ${h.duracion} min</div>
+    <div class="clase-instructor">${h.instructor} &#183; ${h.duracion} min</div>
     ${h.descripcion?`<div class="clase-desc">${h.descripcion}</div>`:''}
-    <span class="fecha-label">ElegÃ­ tu fecha</span>
+    <span class="fecha-label">Elegi tu fecha</span>
     <div class="fecha-tabs">${tabs}</div>
     ${vencTag}
     <div class="cupos-bar">
@@ -996,9 +996,9 @@ function avisarVencimiento() {
   document.getElementById('conf-titulo').textContent = 'Abono vencido';
   document.getElementById('conf-detalle').innerHTML = `
     <div style="text-align:center;padding:8px 0">
-      <div style="font-size:32px;margin-bottom:12px">âš ï¸</div>
+      <div style="font-size:32px;margin-bottom:12px">&#9888;&#65039;</div>
       <p style="font-size:14px;color:var(--dark);margin-bottom:8px">Tu abono vence el <strong>${fechaStr}</strong>.</p>
-      <p style="font-size:13px;color:var(--muted);line-height:1.6">Para reservar clases en esa fecha necesitÃ¡s renovar tu abono.<br>ContactÃ¡ al studio para regularizar tu situaciÃ³n.</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">Para reservar clases en esa fecha necesitas renovar tu abono.<br>Contacta al studio para regularizar tu situacion.</p>
     </div>`;
   const btn = document.getElementById('conf-btn');
   btn.textContent = 'Cerrar';
@@ -1015,7 +1015,7 @@ function accionReservar(horarioId, fecha, hora, instructor) {
   document.getElementById('conf-detalle').innerHTML=`
     <p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Detalle</p>
     <p style="font-size:18px;color:var(--dark);margin-bottom:4px">${DIAS[d.getDay()]} ${hora}</p>
-    <p style="font-size:13px;color:var(--muted)">${d.getDate()} de ${MESES[d.getMonth()]} Â· ${instructor}</p>`;
+    <p style="font-size:13px;color:var(--muted)">${d.getDate()} de ${MESES[d.getMonth()]} &#183; ${instructor}</p>`;
   const btn=document.getElementById('conf-btn');
   btn.textContent='Confirmar reserva';
   btn.disabled=false;
@@ -1027,7 +1027,7 @@ function accionReservar(horarioId, fecha, hora, instructor) {
 
 function accionEspera(horarioId, fecha) {
   document.getElementById('conf-titulo').textContent='Lista de espera';
-  document.getElementById('conf-detalle').innerHTML='<p style="font-size:13px;color:var(--muted)">La clase estÃ¡ completa. Te avisaremos por email si se libera un cupo.</p>';
+  document.getElementById('conf-detalle').innerHTML='<p style="font-size:13px;color:var(--muted)">La clase esta completa. Te avisaremos por email si se libera un cupo.</p>';
   const btn=document.getElementById('conf-btn');
   btn.textContent='Anotarme en espera';
   btn.disabled=false;
@@ -1045,7 +1045,7 @@ async function ejecutarAccion() {
   if (accionPendiente.tipo==='reservar') {
     res=await api('reservarTurno',{clienteId:usuario.id,horarioId:accionPendiente.horarioId,fechaClase:accionPendiente.fecha});
     if (res.ok) {
-      showMsg('conf-msg','âœ“ Â¡Reserva confirmada! RevisÃ¡ tu email.','success');
+      showMsg('conf-msg','&#10003; !Reserva confirmada! Revisa tu email.','success');
       accionPendiente = null;
       btn.textContent='Cerrar';
       btn.disabled=false;
@@ -1055,7 +1055,7 @@ async function ejecutarAccion() {
         localStorage.setItem('spl_user', JSON.stringify(usuario));
         actualizarBannerCreditos({ tipoAbono: usuario.tipoAbono, creditosRestantes: res.creditosRestantes, ilimitado: res.creditosRestantes >= 999 });
       }
-      // Recargar horarios para actualizar cupos y cerrar modal automÃ¡ticamente
+      // Recargar horarios para actualizar cupos y cerrar modal automaticamente
       await cargarHorarios();
       setTimeout(function(){ cerrarModal('modal-confirmar'); }, 1500);
     } else {
@@ -1065,7 +1065,7 @@ async function ejecutarAccion() {
   } else {
     res=await api('anotarseEspera',{clienteId:usuario.id,horarioId:accionPendiente.horarioId,fechaClase:accionPendiente.fecha});
     if (res.ok) {
-      showMsg('conf-msg',`âœ“ EstÃ¡s en posiciÃ³n #${res.posicion}. Te avisaremos si hay cupo.`,'success');
+      showMsg('conf-msg',`&#10003; Estas en posicion #${res.posicion}. Te avisaremos si hay cupo.`,'success');
       accionPendiente = null;
       btn.textContent='Cerrar';
       btn.disabled=false;
@@ -1091,7 +1091,7 @@ async function abrirMisReservas() {
 
   const res = await api('getMisReservas', {clienteId: usuario.id});
   if (!res.ok || !res.reservas.length) {
-    c.innerHTML = '<div class="empty-state"><div class="empty-icon">ðŸ“…</div><p>No tenÃ©s reservas prÃ³ximas</p></div>';
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128197;</div><p>No tenes reservas proximas</p></div>';
     return;
   }
 
@@ -1101,7 +1101,7 @@ async function abrirMisReservas() {
     fecha_clase: normFechaFE(r.fecha_clase)
   })).filter(r => new Date(r.fecha_clase + 'T00:00:00') >= hoyFE);
 
-  // Mostrar navegaciÃ³n y calendario
+  // Mostrar navegacion y calendario
   document.getElementById('cal-nav').style.display = 'flex';
   document.getElementById('cal-grid').style.display = 'block';
 
@@ -1120,34 +1120,34 @@ function calCambiarMes(delta) {
 
 function renderCalendario() {
   const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const aÃ±o = _calMes.getFullYear();
+  const ano = _calMes.getFullYear();
   const mes = _calMes.getMonth();
   const MESES_L = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-  document.getElementById('cal-titulo').textContent = `${MESES_L[mes]} ${aÃ±o}`;
+  document.getElementById('cal-titulo').textContent = `${MESES_L[mes]} ${ano}`;
 
   // Fechas reservadas de este mes
   const reservadasMes = new Set(
     _misReservas
-      .filter(r => { const d = new Date(r.fecha_clase+'T00:00:00'); return d.getMonth()===mes && d.getFullYear()===aÃ±o; })
+      .filter(r => { const d = new Date(r.fecha_clase+'T00:00:00'); return d.getMonth()===mes && d.getFullYear()===ano; })
       .map(r => r.fecha_clase)
   );
 
-  // Primer dÃ­a del mes (0=Dom, ajustar a Lun)
-  const primerDia = new Date(aÃ±o, mes, 1).getDay();
+  // Primer dia del mes (0=Dom, ajustar a Lun)
+  const primerDia = new Date(ano, mes, 1).getDay();
   const offset = primerDia === 0 ? 6 : primerDia - 1; // lunes primero
-  const diasEnMes = new Date(aÃ±o, mes + 1, 0).getDate();
+  const diasEnMes = new Date(ano, mes + 1, 0).getDate();
 
   let html = '<div class="cal-grid">';
   // Headers
   ['Lu','Ma','Mi','Ju','Vi','Sa','Do'].forEach(d => {
     html += `<div class="cal-dia-header">${d}</div>`;
   });
-  // VacÃ­os inicio
+  // Vacios inicio
   for (let i = 0; i < offset; i++) html += '<div class="cal-dia vacio"></div>';
-  // DÃ­as
+  // Dias
   for (let dia = 1; dia <= diasEnMes; dia++) {
-    const fecha = `${aÃ±o}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
+    const fecha = `${ano}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
     const fechaDate = new Date(fecha + 'T00:00:00');
     const esHoy = fechaDate.getTime() === hoy.getTime();
     const esReservado = reservadasMes.has(fecha);
@@ -1186,7 +1186,7 @@ function calDiaClick(fecha) {
 
 function renderListaReservas() {
   const c = document.getElementById('mis-reservas-content');
-  const fmtHoraUI = t => { if(!t) return 'â€”'; const p=String(t).split(':'); return p[0].padStart(2,'0')+':'+(p[1]||'00'); };
+  const fmtHoraUI = t => { if(!t) return '-'; const p=String(t).split(':'); return p[0].padStart(2,'0')+':'+(p[1]||'00'); };
 
   // Agrupar por mes
   let htmlPorMes = '';
@@ -1204,7 +1204,7 @@ function renderListaReservas() {
     htmlPorMes += `<div class="reserva-item" data-fecha="${r.fecha_clase}" style="padding:12px 14px">
       <div class="reserva-info">
         <div class="r-fecha">${DIAS[d.getDay()]} ${d.getDate()} ${MESES_SHORT[d.getMonth()]}</div>
-        <div class="r-clase" style="font-size:13px">${h ? fmtHoraUI(h.hora) + ' Â· ' + h.dia : 'â€”'}</div>
+        <div class="r-clase" style="font-size:13px">${h ? fmtHoraUI(h.hora) + ' &#183; ' + h.dia : '-'}</div>
         <div class="r-inst">${h ? h.instructor : ''}</div>
       </div>
       ${r.estado==='activa'
@@ -1217,7 +1217,7 @@ function renderListaReservas() {
 }
 
 async function cancelarReserva(reservaId) {
-  if (!confirm('Â¿Segura que querÃ©s cancelar esta reserva?')) return;
+  if (!confirm('?Segura que queres cancelar esta reserva?')) return;
   const res=await api('cancelarReserva',{reservaId,clienteId:usuario.id});
   if (res.ok) { abrirMisReservas(); cargarHorarios(); }
   else alert(res.error);
@@ -1232,15 +1232,15 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 });
 </script>
 
-<!-- BOTÃ“N AYUDA -->
+<!-- BOT&#211;N AYUDA -->
 <button onclick="abrirModal('modal-ayuda')" style="position:fixed;bottom:24px;right:24px;z-index:900;width:44px;height:44px;border-radius:50%;background:var(--dark);border:1px solid var(--gold);color:var(--gold-light);font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:all .2s;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:300" onmouseover="this.style.background='var(--gold);this.style.color='var(--dark)'" title="Ayuda">?</button>
 
 <!-- MODAL AYUDA CLIENTA -->
 <div class="modal-overlay" id="modal-ayuda">
   <div class="modal" style="max-width:500px;max-height:85vh;overflow-y:auto">
     <div class="modal-header" style="position:sticky;top:0;background:white;z-index:1;padding-bottom:12px">
-      <h2 class="modal-title">CÃ³mo usar la app</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-ayuda')">âœ•</button>
+      <h2 class="modal-title">C&#243;mo usar la app</h2>
+      <button class="modal-close" onclick="cerrarModal('modal-ayuda')">&#10005;</button>
     </div>
 
     <div style="display:flex;flex-direction:column;gap:20px">
@@ -1248,61 +1248,61 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
       <div>
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Registrarse por primera vez</div>
         <ol style="padding-left:18px;font-size:13px;color:#555;line-height:2">
-          <li>TocÃ¡ <strong>Registrarse</strong> en el encabezado</li>
-          <li>CompletÃ¡ tu nombre, DNI, email y telÃ©fono</li>
-          <li>RespondÃ© el cuestionario de salud PAR-Q</li>
-          <li>AceptÃ¡ la declaraciÃ³n y tocÃ¡ <strong>Crear cuenta</strong></li>
-          <li>RecibirÃ¡s un email de bienvenida</li>
+          <li>Toc&#225; <strong>Registrarse</strong> en el encabezado</li>
+          <li>Complet&#225; tu nombre, DNI, email y tel&#233;fono</li>
+          <li>Respond&#233; el cuestionario de salud PAR-Q</li>
+          <li>Acept&#225; la declaraci&#243;n y toc&#225; <strong>Crear cuenta</strong></li>
+          <li>Recibir&#225;s un email de bienvenida</li>
         </ol>
       </div>
 
       <div>
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Ingresar a tu cuenta</div>
         <ol style="padding-left:18px;font-size:13px;color:#555;line-height:2">
-          <li>TocÃ¡ <strong>Ingresar</strong> y escribÃ­ tu DNI</li>
-          <li>Si tenÃ©s contraseÃ±a, ingresÃ¡la directamente</li>
-          <li>Si no, tocÃ¡ <em>Prefiero usar cÃ³digo por email</em> â€” te llegarÃ¡ un cÃ³digo de 6 dÃ­gitos</li>
-          <li>Para configurar contraseÃ±a, usÃ¡ el Ã­cono ðŸ”‘ en el encabezado</li>
+          <li>Toc&#225; <strong>Ingresar</strong> y escrib&#237; tu DNI</li>
+          <li>Si ten&#233;s contrase&#241;a, ingres&#225;la directamente</li>
+          <li>Si no, toc&#225; <em>Prefiero usar c&#243;digo por email</em> &#8212; te llegar&#225; un c&#243;digo de 6 d&#237;gitos</li>
+          <li>Para configurar contrase&#241;a, us&#225; el &#237;cono &#128273; en el encabezado</li>
         </ol>
       </div>
 
       <div>
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Reservar una clase</div>
         <ol style="padding-left:18px;font-size:13px;color:#555;line-height:2">
-          <li>ElegÃ­ el horario que mÃ¡s te guste</li>
-          <li>SeleccionÃ¡ la fecha en los botones de dÃ­as</li>
-          <li>TocÃ¡ <strong>Reservar lugar</strong></li>
-          <li>ConfirmÃ¡ en el resumen y recibirÃ¡s un email de confirmaciÃ³n</li>
-          <li>PodÃ©s filtrar por dÃ­a con los botones de la barra superior</li>
+          <li>Eleg&#237; el horario que m&#225;s te guste</li>
+          <li>Seleccion&#225; la fecha en los botones de d&#237;as</li>
+          <li>Toc&#225; <strong>Reservar lugar</strong></li>
+          <li>Confirm&#225; en el resumen y recibir&#225;s un email de confirmaci&#243;n</li>
+          <li>Pod&#233;s filtrar por d&#237;a con los botones de la barra superior</li>
         </ol>
       </div>
 
       <div>
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Ver y cancelar mis reservas</div>
         <ul style="padding-left:18px;font-size:13px;color:#555;line-height:2">
-          <li>TocÃ¡ <strong>Mis reservas</strong> en el encabezado</li>
-          <li>VerÃ¡s el calendario con tus clases marcadas en negro</li>
-          <li>Debajo aparece la lista con dÃ­a, hora e instructor</li>
-          <li>Para cancelar, tocÃ¡ <strong>Cancelar</strong> en la reserva</li>
-          <li>Si cancelÃ¡s con suficiente anticipaciÃ³n, se te devuelve el crÃ©dito</li>
+          <li>Toc&#225; <strong>Mis reservas</strong> en el encabezado</li>
+          <li>Ver&#225;s el calendario con tus clases marcadas en negro</li>
+          <li>Debajo aparece la lista con d&#237;a, hora e instructor</li>
+          <li>Para cancelar, toc&#225; <strong>Cancelar</strong> en la reserva</li>
+          <li>Si cancel&#225;s con suficiente anticipaci&#243;n, se te devuelve el cr&#233;dito</li>
         </ul>
       </div>
 
       <div>
-        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">CrÃ©ditos y abonos</div>
+        <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Cr&#233;ditos y abonos</div>
         <ul style="padding-left:18px;font-size:13px;color:#555;line-height:2">
-          <li>Cada clase reservada consume un crÃ©dito de tu semana</li>
-          <li>PodÃ©s reservar para la semana actual y las prÃ³ximas</li>
-          <li>Si tu abono vence, no podrÃ¡s reservar fechas posteriores</li>
-          <li>ContactÃ¡ al studio para renovar tu abono</li>
+          <li>Cada clase reservada consume un cr&#233;dito de tu semana</li>
+          <li>Pod&#233;s reservar para la semana actual y las pr&#243;ximas</li>
+          <li>Si tu abono vence, no podr&#225;s reservar fechas posteriores</li>
+          <li>Contact&#225; al studio para renovar tu abono</li>
         </ul>
       </div>
 
       <div>
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Mis datos</div>
         <ul style="padding-left:18px;font-size:13px;color:#555;line-height:2">
-          <li>TocÃ¡ <strong>ðŸ‘¤ Mis datos</strong> para ver y actualizar tu perfil</li>
-          <li>PodÃ©s cambiar tu nombre, email y telÃ©fono</li>
+          <li>Toc&#225; <strong>&#128100; Mis datos</strong> para ver y actualizar tu perfil</li>
+          <li>Pod&#233;s cambiar tu nombre, email y tel&#233;fono</li>
           <li>El DNI no se puede modificar (es tu identificador)</li>
         </ul>
       </div>
