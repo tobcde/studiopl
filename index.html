@@ -564,7 +564,7 @@
 </div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbzLk5eCuPB2D8IP4ivYhX9sXarj8zVBJS3mrZpeN3DPBTnMkttdu5A93-aAJFOqYQUV/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbwu_JRpCVFgF8GQN660EwvO5fG-cK05R2dT-EZKRi6t6Fh81Ki64Jwt01cAmrnTpskw/exec';
 let usuario = JSON.parse(localStorage.getItem('spl_user') || 'null');
 let horariosData = [];
 let filtroActivo = 'todos';
@@ -1117,28 +1117,22 @@ async function abrirMisReservas() {
   c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   document.getElementById('cal-nav').style.display = 'none';
   document.getElementById('cal-grid').style.display = 'none';
-
   const res = await api('getMisReservas', {clienteId: usuario.id});
-  if (!res.ok || !res.reservas.length) {
-    c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x1F4C5;</div><p>No tenes reservas proximas</p></div>';
+  if (!res.ok) { c.innerHTML = '<div class="empty-state">Error al cargar</div>'; return; }
+  _misReservas = (res.reservas||[]).map(r=>({...r, fecha_clase:normFechaFE(r.fecha_clase)}));
+  const historial = (res.historial||[]).map(r=>({...r, fecha_clase:normFechaFE(r.fecha_clase)}));
+  if (!_misReservas.length && !historial.length) {
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x1F4C5;</div><p>No ten&eacute;s reservas</p></div>';
     return;
   }
-
-  _misReservas = res.reservas.map(r => ({
-    ...r,
-    fecha_clase: normFechaFE(r.fecha_clase)
-  }));
-
-  // Mostrar navegacion y calendario
-  document.getElementById('cal-nav').style.display = 'flex';
-  document.getElementById('cal-grid').style.display = 'block';
-
-  // Ir al mes de la primer reserva
-  const primera = new Date(_misReservas[0].fecha_clase + 'T00:00:00');
-  _calMes = new Date(primera.getFullYear(), primera.getMonth(), 1);
-
-  renderCalendario();
-  renderListaReservas();
+  if (_misReservas.length) {
+    document.getElementById('cal-nav').style.display = 'flex';
+    document.getElementById('cal-grid').style.display = 'block';
+    const primera = new Date(_misReservas[0].fecha_clase + 'T00:00:00');
+    _calMes = new Date(primera.getFullYear(), primera.getMonth(), 1);
+    renderCalendario();
+  }
+  renderListaReservas(historial);
 }
 
 function calCambiarMes(delta) {
@@ -1212,36 +1206,53 @@ function calDiaClick(fecha) {
   }
 }
 
-function renderListaReservas() {
+function renderListaReservas(historial) {
   const c = document.getElementById('mis-reservas-content');
-  const fmtHoraUI = t => { if(!t) return '-'; const p=String(t).split(':'); return p[0].padStart(2,'0')+':'+(p[1]||'00'); };
-
-  // Agrupar por mes
-  let htmlPorMes = '';
-  let mesActual = '';
-  const MESES_L = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-
-  _misReservas.forEach(r => {
-    const d = new Date(r.fecha_clase + 'T00:00:00');
-    const mesKey = `${d.getFullYear()}-${d.getMonth()}`;
-    if (mesKey !== mesActual) {
-      mesActual = mesKey;
-      htmlPorMes += `<div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:10px 0 6px">${MESES_L[d.getMonth()]} ${d.getFullYear()}</div>`;
-    }
-    const h = r.horario;
-    htmlPorMes += `<div class="reserva-item" data-fecha="${r.fecha_clase}" style="padding:12px 14px">
-      <div class="reserva-info">
-        <div class="r-fecha">${DIAS[d.getDay()]} ${d.getDate()} ${MESES_SHORT[d.getMonth()]}</div>
-        <div class="r-clase" style="font-size:13px">${h ? fmtHoraUI(h.hora) + ' . ' + h.dia : '-'}</div>
-        <div class="r-inst">${h ? h.instructor : ''}</div>
-      </div>
-      ${r.estado==='activa'
-        ? `<button class="btn-cancelar" onclick="cancelarReserva('${r.id}')">Cancelar</button>`
-        : '<span style="font-size:11px;color:var(--muted)">Cancelada</span>'}
-    </div>`;
-  });
-
-  c.innerHTML = htmlPorMes;
+  const fmtH = t => { if(!t) return '--'; const p=String(t).split(':'); return p[0].padStart(2,'0')+':'+(p[1]||'00'); };
+  const ML = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  let html = '';
+  // -- PROXIMAS --
+  if (_misReservas.length) {
+    html += '<div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin:0 0 8px">PR&Oacute;XIMAS</div>';
+    let mA = '';
+    _misReservas.forEach(r => {
+      const d = new Date(r.fecha_clase + 'T00:00:00');
+      const mk = d.getFullYear()+'-'+d.getMonth();
+      if (mk !== mA) { mA=mk; html+=`<div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:10px 0 6px">${ML[d.getMonth()]} ${d.getFullYear()}</div>`; }
+      const h = r.horario;
+      html += `<div class="reserva-item" data-fecha="${r.fecha_clase}" style="padding:12px 14px">
+        <div class="reserva-info">
+          <div class="r-fecha">${DIAS[d.getDay()]} ${d.getDate()} ${MESES_SHORT[d.getMonth()]}</div>
+          <div class="r-clase" style="font-size:13px">${h ? fmtH(h.hora)+' &middot; '+h.dia : '--'}</div>
+          <div class="r-inst">${h ? h.instructor : ''}</div>
+        </div>
+        ${r.estado==='activa' ? `<button class="btn-cancelar" onclick="cancelarReserva('${r.id}')">Cancelar</button>` : '<span style="font-size:11px;color:var(--muted)">Cancelada</span>'}
+      </div>`;
+    });
+  } else {
+    html += '<div style="font-size:12px;color:var(--muted);padding:8px 0 12px">No ten&eacute;s clases pr&oacute;ximas.</div>';
+  }
+  // -- HISTORIAL --
+  if (historial && historial.length) {
+    html += '<div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:20px 0 8px;padding-top:16px;border-top:1px solid var(--border)">HISTORIAL</div>';
+    let mH = '';
+    historial.forEach(r => {
+      const d = new Date(r.fecha_clase + 'T00:00:00');
+      const mk = d.getFullYear()+'-'+d.getMonth();
+      if (mk !== mH) { mH=mk; html+=`<div style="font-size:9px;letter-spacing:1.5px;color:var(--muted);opacity:.6;margin:8px 0 4px">${ML[d.getMonth()]} ${d.getFullYear()}</div>`; }
+      const h = r.horario;
+      const canc = r.estado === 'cancelada';
+      html += `<div class="reserva-item" style="padding:10px 14px;opacity:${canc?'0.5':'0.8'}">
+        <div class="reserva-info">
+          <div class="r-fecha" style="font-size:10px">${DIAS[d.getDay()]} ${d.getDate()} ${MESES_SHORT[d.getMonth()]}</div>
+          <div class="r-clase" style="font-size:12px">${h ? fmtH(h.hora)+' &middot; '+h.dia : '--'}</div>
+          <div class="r-inst">${h ? h.instructor : ''}</div>
+        </div>
+        <span style="font-size:10px;color:var(--muted)">${canc ? 'Cancelada' : 'Realizada'}</span>
+      </div>`;
+    });
+  }
+  c.innerHTML = html;
 }
 
 async function cancelarReserva(reservaId) {
