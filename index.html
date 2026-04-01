@@ -120,41 +120,7 @@
 
     /* â”€â”€ MOBILE: 1 columna â”€â”€ */
 
-    /* CALENDARIO EXPLORAR CLASES */
-    .explore-cal-wrap { max-width:1200px;margin:0 auto;padding:0 48px 40px; }
-    .explore-tabs { display:flex;gap:0;margin-bottom:0;border-bottom:1px solid var(--border); }
-    .explore-tab { background:none;border:none;border-bottom:2px solid transparent;padding:10px 24px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);cursor:pointer;font-family:'Montserrat',sans-serif;transition:all .2s;margin-bottom:-1px; }
-    .explore-tab.active { color:var(--dark);border-bottom-color:var(--gold); }
-    .explore-cal { margin-top:20px; }
-    .explore-cal-nav { display:flex;align-items:center;justify-content:space-between;margin-bottom:16px; }
-    .explore-cal-nav button { background:none;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;cursor:pointer;font-size:16px;transition:all .2s; }
-    .explore-cal-nav button:hover { border-color:var(--gold);color:var(--dark); }
-    .explore-cal-titulo { font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--dark); }
-    .explore-cal-grid { display:grid;grid-template-columns:repeat(7,1fr);gap:4px; }
-    .explore-cal-header { text-align:center;font-size:9px;letter-spacing:1.5px;color:var(--muted);padding:6px 0;text-transform:uppercase; }
-    .explore-cal-dia { min-height:52px;padding:4px;border:1px solid transparent;cursor:default;position:relative;transition:all .15s; }
-    .explore-cal-dia.tiene-clases { border-color:var(--border);cursor:pointer;background:var(--white); }
-    .explore-cal-dia.tiene-clases:hover { border-color:var(--gold);background:#fdf8f2; }
-    .explore-cal-dia.seleccionado { border-color:var(--gold);background:#fdf8f2;box-shadow:0 0 0 1px var(--gold); }
-    .explore-cal-dia.hoy .explore-num { background:var(--dark);color:var(--gold-light);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center; }
-    .explore-cal-dia.pasado { opacity:.4; }
-    .explore-cal-dia.cerrado { opacity:.25; }
-    .explore-num { font-size:11px;color:var(--dark);font-weight:500;margin-bottom:2px; }
-    .explore-dots { display:flex;gap:2px;flex-wrap:wrap;margin-top:2px; }
-    .explore-dot { width:6px;height:6px;border-radius:50%;background:var(--gold);opacity:.7; }
-    .explore-detail { margin-top:20px;background:var(--white);border:1px solid var(--border);padding:20px 24px; }
-    .explore-detail-titulo { font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:14px; }
-    .explore-clase-item { display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);gap:12px; }
-    .explore-clase-item:last-child { border-bottom:none; }
-    .explore-clase-hora { font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;min-width:70px; }
-    .explore-clase-info { flex:1; }
-    .explore-clase-dia { font-size:10px;letter-spacing:1px;color:var(--gold);text-transform:uppercase;margin-bottom:2px; }
-    .explore-clase-inst { font-size:12px;color:var(--muted); }
-    .explore-clase-cupos { font-size:11px;color:var(--muted);text-align:right;min-width:80px; }
-    .explore-clase-cupos.lleno { color:#c07060; }
-    @media (max-width:900px) { .explore-cal-wrap { padding:0 24px 32px; } }
     @media (max-width:640px) { 
-      .explore-cal-wrap { padding:0 16px 24px; }
       .explore-cal-dia { min-height:38px;padding:2px; }
       .explore-dot { width:5px;height:5px; }
       .explore-clase-hora { font-size:20px;min-width:56px; }
@@ -323,35 +289,19 @@
   <p>ElegÃ­ el horario que mejor se adapte a tu rutina y reservÃ¡ tu lugar en pocos pasos.</p>
 </section>
 
-<!-- TABS VISTA -->
-<div class="explore-cal-wrap" id="vista-container">
-  <div class="explore-tabs">
-    <button class="explore-tab active" onclick="cambiarVista('lista', this)">Lista</button>
-    <button class="explore-tab" onclick="cambiarVista('calendario', this)">Calendario</button>
-  </div>
-
-  <!-- VISTA LISTA -->
-  <div id="vista-lista">
-    <div class="filters" style="padding:16px 0 20px;max-width:none">
-      <button class="filter-btn active" onclick="filtrar('todos',this)">Todos</button>
-      <button class="filter-btn" onclick="filtrar('Lunes',this)">Lunes</button>
-      <button class="filter-btn" onclick="filtrar('Martes',this)">Martes</button>
-      <button class="filter-btn" onclick="filtrar('MiÃ©rcoles',this)">MiÃ©rcoles</button>
-      <button class="filter-btn" onclick="filtrar('Jueves',this)">Jueves</button>
-      <button class="filter-btn" onclick="filtrar('Viernes',this)">Viernes</button>
-      <button class="filter-btn" onclick="filtrar('SÃ¡bado',this)">SÃ¡bado</button>
-    </div>
-    <div class="clases-grid" id="clases-grid" style="padding:0;max-width:none">
-      <div class="loading"><div class="spinner"></div></div>
-    </div>
-  </div>
-
-  <!-- VISTA CALENDARIO -->
-  <div id="vista-calendario" style="display:none">
-    <div class="explore-cal" id="explore-cal"></div>
-    <div id="explore-detail" style="display:none"></div>
-  </div>
+<div class="filters">
+  <button class="filter-btn active" onclick="filtrar('todos',this)">Todos</button>
+  <button class="filter-btn" onclick="filtrar('Lunes',this)">Lunes</button>
+  <button class="filter-btn" onclick="filtrar('Martes',this)">Martes</button>
+  <button class="filter-btn" onclick="filtrar('MiÃ©rcoles',this)">MiÃ©rcoles</button>
+  <button class="filter-btn" onclick="filtrar('Jueves',this)">Jueves</button>
+  <button class="filter-btn" onclick="filtrar('Viernes',this)">Viernes</button>
+  <button class="filter-btn" onclick="filtrar('SÃ¡bado',this)">SÃ¡bado</button>
 </div>
+
+<main class="clases-grid" id="clases-grid">
+  <div class="loading"><div class="spinner"></div></div>
+</main>
 
 <!-- MODAL LOGIN -->
 <div class="modal-overlay" id="modal-login">
@@ -955,152 +905,6 @@ function normFechaFE(v) {
   } catch(e) {}
   return s.substring(0,10);
 }
-async // â”€â”€ VISTA CALENDARIO / LISTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-let vistaActual = 'lista';
-let calExploreMes = new Date();
-let calExploreSelFecha = null;
-
-function cambiarVista(vista, btn) {
-  vistaActual = vista;
-  document.querySelectorAll('.explore-tab').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('vista-lista').style.display = vista === 'lista' ? 'block' : 'none';
-  document.getElementById('vista-calendario').style.display = vista === 'calendario' ? 'block' : 'none';
-  if (vista === 'calendario' && horariosData.length) renderCalExplore();
-}
-
-function renderCalExplore() {
-  if (!usuario) return;
-  const hoy = new Date(); hoy.setHours(0,0,0,0);
-  const aÃ±o = calExploreMes.getFullYear();
-  const mes = calExploreMes.getMonth();
-  const MESES_L = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-  const DIAS_N = {Domingo:0,Lunes:1,Martes:2,'MiÃ©rcoles':3,Jueves:4,Viernes:5,'SÃ¡bado':6};
-  const diasEnMes = new Date(aÃ±o, mes+1, 0).getDate();
-  const primerDia = new Date(aÃ±o, mes, 1).getDay();
-  const offset = primerDia === 0 ? 6 : primerDia - 1;
-
-  // Armar mapa de fechas con clases disponibles
-  const mapFechas = {};
-  horariosData.forEach(h => {
-    (h.proximas || []).forEach(p => {
-      if (!mapFechas[p.fecha]) mapFechas[p.fecha] = [];
-      mapFechas[p.fecha].push({
-        hora: h.hora, dia: h.dia, instructor: h.instructor,
-        disponibles: p.disponibles, cupos_totales: h.cupos_totales,
-        tieneReserva: p.tieneReserva, reservaId: p.reservaId,
-        horarioId: h.id, esFijo: h.esFijo
-      });
-    });
-  });
-
-  // Config dÃ­as cerrados
-  const cerrados = (window._diasCerrados || []).map(d => d.fecha);
-
-  let html = `<div class="explore-cal-nav">
-    <button onclick="calExploreNav(-1)">â€¹</button>
-    <span class="explore-cal-titulo">${MESES_L[mes]} ${aÃ±o}</span>
-    <button onclick="calExploreNav(1)">â€º</button>
-  </div><div class="explore-cal-grid">`;
-
-  ['Lu','Ma','Mi','Ju','Vi','Sa','Do'].forEach(d => {
-    html += `<div class="explore-cal-header">${d}</div>`;
-  });
-
-  for (let i = 0; i < offset; i++) html += '<div class="explore-cal-dia"></div>';
-
-  for (let dia = 1; dia <= diasEnMes; dia++) {
-    const fecha = `${aÃ±o}-${String(mes+1).padStart(2,'0')}-${String(dia).padStart(2,'0')}`;
-    const fechaD = new Date(fecha + 'T00:00:00');
-    const clases = mapFechas[fecha] || [];
-    const esCerrado = cerrados.includes(fecha);
-    const esPasado = fechaD < hoy;
-    const esHoy = fechaD.getTime() === hoy.getTime();
-    const esSel = fecha === calExploreSelFecha;
-    const tieneClases = clases.length > 0 && !esCerrado;
-
-    let cls = 'explore-cal-dia';
-    if (esCerrado) cls += ' cerrado';
-    else if (esPasado) cls += ' pasado';
-    else if (tieneClases) cls += ' tiene-clases';
-    if (esHoy) cls += ' hoy';
-    if (esSel) cls += ' seleccionado';
-
-    const onclick = tieneClases && !esPasado ? `onclick="calExploreSelDia('${fecha}')"` : '';
-    const dots = tieneClases ? clases.slice(0,3).map(() => '<div class="explore-dot"></div>').join('') : '';
-    const numHtml = `<div class="explore-num">${dia}</div>`;
-    html += `<div class="${cls}" ${onclick}>${numHtml}<div class="explore-dots">${dots}</div></div>`;
-  }
-
-  html += '</div>';
-  document.getElementById('explore-cal').innerHTML = html;
-
-  // Mostrar detalle si hay fecha seleccionada
-  if (calExploreSelFecha && mapFechas[calExploreSelFecha]) {
-    renderCalExploreDetalle(calExploreSelFecha, mapFechas[calExploreSelFecha]);
-  } else {
-    document.getElementById('explore-detail').style.display = 'none';
-  }
-}
-
-function calExploreNav(delta) {
-  calExploreMes = new Date(calExploreMes.getFullYear(), calExploreMes.getMonth() + delta, 1);
-  calExploreSelFecha = null;
-  renderCalExplore();
-}
-
-function calExploreSelDia(fecha) {
-  calExploreSelFecha = fecha;
-  // Rebuild para actualizar seleccionado
-  renderCalExplore();
-}
-
-function renderCalExploreDetalle(fecha, clases) {
-  const d = new Date(fecha + 'T00:00:00');
-  const DIAS_ES = ['Domingo','Lunes','Martes','MiÃ©rcoles','Jueves','Viernes','SÃ¡bado'];
-  const MESES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-  const tituloFecha = `${DIAS_ES[d.getDay()]} ${d.getDate()} de ${MESES_ES[d.getMonth()]}`;
-  const fmtH = h => { const p=String(h||'').split(':'); return p[0].padStart(2,'0')+':'+(p[1]||'00'); };
-
-  const items = clases.map(c => {
-    const libre = c.disponibles;
-    const pct = Math.round(((c.cupos_totales - libre) / c.cupos_totales) * 100);
-    let accion = '';
-    if (c.tieneReserva) {
-      accion = `<div style="display:flex;align-items:center;gap:8px">
-        <span style="font-size:10px;color:#5a8a6a;letter-spacing:1px">âœ“ RESERVADO</span>
-        <button class="btn-cancelar" style="font-size:9px;padding:4px 10px" onclick="cancelarReserva('${c.reservaId}')">Cancelar</button>
-      </div>`;
-    } else if (libre === 0) {
-      accion = `<button class="btn-reservar espera" style="width:auto;padding:8px 14px;font-size:9px" onclick="accionEspera('${c.horarioId}','${fecha}')">Lista espera</button>`;
-    } else {
-      accion = `<button class="btn-reservar" style="width:auto;padding:8px 16px;font-size:9px" onclick="accionReservar('${c.horarioId}','${fecha}','${fmtH(c.hora)}','${c.instructor}')">Reservar</button>`;
-    }
-    const cuposColor = libre === 0 ? 'lleno' : libre <= 1 ? 'style="color:#c09060"' : '';
-    return `<div class="explore-clase-item">
-      <div class="explore-clase-hora">${fmtH(c.hora)}</div>
-      <div class="explore-clase-info">
-        <div class="explore-clase-dia">${c.dia}${c.esFijo ? ' ðŸ“Œ' : ''}</div>
-        <div class="explore-clase-inst">${c.instructor}</div>
-      </div>
-      <div class="explore-clase-cupos ${libre===0?'lleno':''}">${libre===0?'Completo':`${libre} lugar${libre!==1?'es':''}`}</div>
-      ${accion}
-    </div>`;
-  }).join('');
-
-  const detail = document.getElementById('explore-detail');
-  detail.style.display = 'block';
-  detail.innerHTML = `<div class="explore-detail">
-    <div class="explore-detail-titulo">${tituloFecha}</div>
-    ${items}
-  </div>`;
-  detail.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-function actualizarCalExploreSiVisible() {
-  if (vistaActual === 'calendario') renderCalExplore();
-}
-
 async function cargarHorarios() {
   document.getElementById('clases-grid').innerHTML='<div class="loading"><div class="spinner"></div></div>';
   const params = { action: 'getHorarios' };
@@ -1108,7 +912,6 @@ async function cargarHorarios() {
   const res = await api('getHorarios', params);
   if (res.ok) {
     horariosData = res.horarios;
-    window._diasCerrados = res.diasCerrados || [];
     // Actualizar crÃ©ditos del usuario
     if (res.creditosInfo && usuario) {
       usuario.creditosRestantes = res.creditosInfo.creditosRestantes;
@@ -1118,7 +921,6 @@ async function cargarHorarios() {
       actualizarBannerCreditos(res.creditosInfo);
     }
     renderHorarios();
-    actualizarCalExploreSiVisible();
   }
 }
 
