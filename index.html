@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Studio PL â€” ReservÃ¡ tu clase</title>
+  <title>Studio PL &mdash; ReservÃ¡ tu clase</title>
   <meta name="version" content="1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,14 +112,14 @@
     .cal-dia.reservado:hover { background:var(--gold);color:var(--dark); }
     .cal-dia.pasado { opacity:.35; }
 
-    /* â”€â”€ TABLET: 2 columnas â”€â”€ */
+    /* -- TABLET: 2 columnas -- */
     @media (max-width: 900px) {
       .clases-grid { grid-template-columns: repeat(2, 1fr); padding: 0 24px 60px; gap: 16px; }
       .hero { padding: 44px 24px 30px; }
       .filters { padding: 0 24px 20px; }
     }
 
-    /* â”€â”€ MOBILE: 1 columna â”€â”€ */
+    /* -- MOBILE: 1 columna -- */
 
     @media (max-width:640px) { 
       .explore-cal-dia { min-height:38px;padding:2px; }
@@ -262,15 +262,15 @@
       <!-- Botones desktop -->
       <button class="hdr-btn hdr-desktop" onclick="abrirMisReservas()">Mis reservas</button>
       <button class="hdr-btn hdr-desktop" onclick="abrirMisDatos()">Mis datos</button>
-      <button class="hdr-btn hdr-desktop" onclick="abrirModal('modal-password')" title="Cambiar contraseÃ±a">ðŸ”‘</button>
+      <button class="hdr-btn hdr-desktop" onclick="abrirModal('modal-password')" title="Cambiar contraseÃ±a">&#x1F511;</button>
       <button id="btn-logout" class="hdr-desktop" onclick="logout()">Salir</button>
       <!-- MenÃº mobile -->
       <div id="user-menu">
-        <button id="user-menu-btn" onclick="toggleUserMenu()">â˜°</button>
+        <button id="user-menu-btn" onclick="toggleUserMenu()">&#x2630;</button>
         <div id="user-menu-panel">
-          <button onclick="closeUserMenu();abrirMisReservas()">ðŸ“… Mis reservas</button>
-          <button onclick="closeUserMenu();abrirMisDatos()">ðŸ‘¤ Mis datos</button>
-          <button onclick="closeUserMenu();abrirModal('modal-password')">ðŸ”‘ ContraseÃ±a</button>
+          <button onclick="closeUserMenu();abrirMisReservas()">&#x1F4C5; Mis reservas</button>
+          <button onclick="closeUserMenu();abrirMisDatos()">&#x1F464; Mis datos</button>
+          <button onclick="closeUserMenu();abrirModal('modal-password')">&#x1F511; ContraseÃ±a</button>
           <button onclick="closeUserMenu();logout()">Salir</button>
         </div>
       </div>
@@ -309,7 +309,7 @@
   <div class="modal">
     <div class="modal-header">
       <h2 class="modal-title">Ingresar</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-login')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-login')">&#x2715;</button>
     </div>
 
     <!-- Paso 1: DNI -->
@@ -329,7 +329,7 @@
       <p style="font-size:13px;color:var(--muted);margin-bottom:20px">IngresÃ¡ tu contraseÃ±a.</p>
       <div class="form-group" style="position:relative">
         <label>ContraseÃ±a</label>
-        <input type="password" id="login-password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" onkeydown="if(event.key==='Enter')doLoginConPassword()">
+        <input type="password" id="login-password" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;&#x2022;" onkeydown="if(event.key==='Enter')doLoginConPassword()">
         <button onclick="togglePass('login-password')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
       </div>
       <button class="btn-primary" onclick="doLoginConPassword()">Ingresar</button>
@@ -353,7 +353,7 @@
 
     <!-- Paso 3: reset enviado -->
     <div id="login-s3" style="display:none;text-align:center;padding:10px 0">
-      <div style="font-size:32px;margin-bottom:12px">ðŸ“§</div>
+      <div style="font-size:32px;margin-bottom:12px">&#x1F4E7;</div>
       <p style="font-size:14px;color:var(--dark);margin-bottom:8px">Te enviamos un link para resetear tu contraseÃ±a.</p>
       <p style="font-size:12px;color:var(--muted)">RevisÃ¡ tu email y seguÃ­ las instrucciones.</p>
       <button class="btn-secondary" style="margin-top:20px" onclick="volverLoginDni()">Volver</button>
@@ -366,7 +366,7 @@
   <div class="modal">
     <div class="modal-header">
       <h2 class="modal-title">Mis datos</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-mis-datos')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-mis-datos')">&#x2715;</button>
     </div>
     <div id="mis-datos-msg"></div>
 
@@ -405,7 +405,7 @@
   <div class="modal">
     <div class="modal-header">
       <h2 class="modal-title">Mi contraseÃ±a</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-password')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-password')">&#x2715;</button>
     </div>
     <div id="pass-msg"></div>
     <p style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.6">
@@ -434,7 +434,7 @@
         <h2 class="modal-title">Crear cuenta</h2>
         <p style="font-size:11px;color:var(--muted);letter-spacing:1px;margin-top:4px">FICHA DE INSCRIPCIÃ“N Â· STUDIO PL</p>
       </div>
-      <button class="modal-close" onclick="cerrarModal('modal-registro')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-registro')">&#x2715;</button>
     </div>
 
     <div id="reg-msg"></div>
@@ -512,13 +512,13 @@
   <div class="modal" style="max-width:440px;padding:28px 28px 24px">
     <div class="modal-header">
       <h2 class="modal-title">Mis reservas</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-mis-reservas')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-mis-reservas')">&#x2715;</button>
     </div>
     <!-- NavegaciÃ³n del calendario -->
     <div id="cal-nav" style="display:none;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <button onclick="calCambiarMes(-1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1">â€¹</button>
+      <button onclick="calCambiarMes(-1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1">&lsaquo;</button>
       <span id="cal-titulo" style="font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--dark)"></span>
-      <button onclick="calCambiarMes(1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1">â€º</button>
+      <button onclick="calCambiarMes(1)" style="background:none;border:1px solid var(--border);color:var(--muted);width:26px;height:26px;cursor:pointer;font-size:14px;line-height:1">&rsaquo;</button>
     </div>
     <!-- Calendario -->
     <div id="cal-grid" style="display:none;margin-bottom:14px"></div>
@@ -532,7 +532,7 @@
   <div class="modal">
     <div class="modal-header">
       <h2 class="modal-title" id="conf-titulo">Confirmar reserva</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-confirmar')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-confirmar')">&#x2715;</button>
     </div>
     <div id="conf-msg"></div>
     <div id="conf-detalle" style="background:var(--cream);padding:20px;margin-bottom:24px;border-left:3px solid var(--gold)"></div>
@@ -604,7 +604,7 @@ function actualizarBannerCreditos(info) {
   if (!info || !info.tipoAbono) { if (banner) banner.style.display='none'; return; }
   if (!banner) return;
   if (info.ilimitado) {
-    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val">âˆž clases</span>`;
+    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val">Infinito clases</span>`;
   } else {
     const rest = info.creditosRestantes;
     const color = rest===0?'#c0392b':rest<=1?'#c9a96e':'#6b8f71';
@@ -657,7 +657,7 @@ async function checkLoginMethod() {
     document.getElementById('login-s2a').style.display='block';
     document.getElementById('login-password').focus();
   } else {
-    // Sin contraseÃ±a â†’ mandar cÃ³digo al email del cliente
+    // Sin contraseÃ±a -> mandar cÃ³digo al email del cliente
     const r2 = await api('loginCliente', {dni});
     if (r2.ok) {
       document.getElementById('login-s2b').style.display='block';
@@ -744,14 +744,14 @@ async function verificarCodigo() {
   }
 }
 
-// â”€â”€ MIS DATOS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- MIS DATOS ---------------------------------------------
 async function abrirMisDatos() {
   if (!usuario) return;
   document.getElementById('mis-datos-msg').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   abrirModal('modal-mis-datos');
   const res = await api('getClientePerfil', {clienteId: usuario.id});
   const c = res?.ok ? res.cliente : usuario;
-  document.getElementById('md-dni').value = c.dni || 'â€”';
+  document.getElementById('md-dni').value = c.dni || '&mdash;';
   document.getElementById('md-nombre').value = c.nombre || '';
   document.getElementById('md-email').value = c.email || '';
   document.getElementById('md-telefono').value = c.telefono || '';
@@ -772,14 +772,14 @@ async function guardarMisDatos() {
     usuario.email = email;
     localStorage.setItem('spl_user', JSON.stringify(usuario));
     document.getElementById('user-name').textContent = nombre;
-    showMsg('mis-datos-msg','âœ“ Datos actualizados correctamente','success');
+    showMsg('mis-datos-msg','&#x2713; Datos actualizados correctamente','success');
     setTimeout(() => cerrarModal('modal-mis-datos'), 1800);
   } else {
     showMsg('mis-datos-msg', res.error || 'Error al guardar', 'error');
   }
 }
 
-// â”€â”€ CONTRASEÃ‘A â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -- CONTRASEÃ‘A ----------------------------------------------
 function togglePass(id) {
   const el = document.getElementById(id);
   el.type = el.type==='password' ? 'text' : 'password';
@@ -938,7 +938,7 @@ function renderHorarios() {
   // Si no hay sesiÃ³n, mostrar muro de login
   if (!usuario) {
     grid.innerHTML = `<div class="guest-wall">
-      <div class="guest-wall-icon">ðŸ”’</div>
+      <div class="guest-wall-icon">&#x1F512;</div>
       <h3>IniciÃ¡ sesiÃ³n para ver los horarios</h3>
       <p>AccedÃ© a tu cuenta para ver las clases disponibles y hacer tu reserva.</p>
       <div class="guest-wall-btns">
@@ -949,7 +949,7 @@ function renderHorarios() {
     return;
   }
   const filtrados = filtroActivo==='todos' ? horariosData : horariosData.filter(h=>h.dia===filtroActivo);
-  if (!filtrados.length) { grid.innerHTML='<div class="empty-state"><div class="empty-icon">ðŸ§˜</div><p>No hay clases disponibles</p></div>'; return; }
+  if (!filtrados.length) { grid.innerHTML='<div class="empty-state"><div class="empty-icon">&#x1F9D8;</div><p>No hay clases disponibles</p></div>'; return; }
   grid.innerHTML = filtrados.map(h=>renderCard(h)).join('');
 }
 
@@ -976,16 +976,16 @@ function renderCard(h) {
   let btn;
   if (usuario) {
     if (tieneReserva) {
-      const labelFijo = esFijo ? ' ðŸ“Œ Horario fijo' : '';
+      const labelFijo = esFijo ? ' &#x1F4CC; Horario fijo' : '';
       btn = `<div style="display:flex;gap:8px">
-        <button class="btn-reservar" style="background:var(--success,#5a8a6a);flex:1;cursor:default">âœ“ Reservado${labelFijo}</button>
-        <button class="btn-reservar" style="background:none;border:1px solid var(--muted);color:var(--muted);width:auto;padding:13px 16px" onclick="accionCancelar('${reservaId}')">âœ•</button>
+        <button class="btn-reservar" style="background:var(--success,#5a8a6a);flex:1;cursor:default">&#x2713; Reservado${labelFijo}</button>
+        <button class="btn-reservar" style="background:none;border:1px solid var(--muted);color:var(--muted);width:auto;padding:13px 16px" onclick="accionCancelar('${reservaId}')">&#x2715;</button>
       </div>`;
     } else if (postVenc) {
       // Fecha cae despues del vencimiento del abono
-      btn = `<button class="btn-reservar" style="background:none;border:1px solid #c09060;color:#c09060;cursor:default" onclick="avisarVencimiento()">âš  Renovar abono para reservar</button>`;
+      btn = `<button class="btn-reservar" style="background:none;border:1px solid #c09060;color:#c09060;cursor:default" onclick="avisarVencimiento()">&#x26A0; Renovar abono para reservar</button>`;
     } else if (esFijo) {
-      btn = `<button class="btn-reservar" style="background:var(--gold);color:var(--dark)" onclick="accionReservar('${h.id}','${selF}','${h.hora}','${h.instructor}')">ðŸ“Œ Confirmar horario fijo</button>`;
+      btn = `<button class="btn-reservar" style="background:var(--gold);color:var(--dark)" onclick="accionReservar('${h.id}','${selF}','${h.hora}','${h.instructor}')">&#x1F4CC; Confirmar horario fijo</button>`;
     } else if (lleno) {
       btn = `<button class="btn-reservar espera" onclick="accionEspera('${h.id}','${selF}')">Lista de espera (${fd.enEspera} esperando)</button>`;
     } else {
@@ -995,7 +995,7 @@ function renderCard(h) {
     btn = `<button class="btn-reservar" onclick="abrirModal('modal-login')">IniciÃ¡ sesiÃ³n para reservar</button>`;
   }
 
-  const fijoTag = esFijo ? '<span style="font-size:9px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:4px">ðŸ“Œ Horario fijo</span>' : '';
+  const fijoTag = esFijo ? '<span style="font-size:9px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:4px">&#x1F4CC; Horario fijo</span>' : '';
   const vencTag = proximas.some(p=>p.postVencimiento) ? '<div style="font-size:10px;color:#c09060;margin-bottom:6px">* Fecha fuera de tu abono actual</div>' : '';
 
   return `<div class="clase-card">
@@ -1025,7 +1025,7 @@ function avisarVencimiento() {
   document.getElementById('conf-titulo').textContent = 'Abono vencido';
   document.getElementById('conf-detalle').innerHTML = `
     <div style="text-align:center;padding:8px 0">
-      <div style="font-size:32px;margin-bottom:12px">âš ï¸</div>
+      <div style="font-size:32px;margin-bottom:12px">&#x26A0;</div>
       <p style="font-size:14px;color:var(--dark);margin-bottom:8px">Tu abono vence el <strong>${fechaStr}</strong>.</p>
       <p style="font-size:13px;color:var(--muted);line-height:1.6">Para reservar clases en esa fecha necesitÃ¡s renovar tu abono.<br>ContactÃ¡ al studio para regularizar tu situaciÃ³n.</p>
     </div>`;
@@ -1074,7 +1074,7 @@ async function ejecutarAccion() {
   if (accionPendiente.tipo==='reservar') {
     res=await api('reservarTurno',{clienteId:usuario.id,horarioId:accionPendiente.horarioId,fechaClase:accionPendiente.fecha});
     if (res.ok) {
-      showMsg('conf-msg','âœ“ Â¡Reserva confirmada! RevisÃ¡ tu email.','success');
+      showMsg('conf-msg','&#x2713; Â¡Reserva confirmada! RevisÃ¡ tu email.','success');
       accionPendiente = null;
       btn.textContent='Cerrar';
       btn.disabled=false;
@@ -1094,7 +1094,7 @@ async function ejecutarAccion() {
   } else {
     res=await api('anotarseEspera',{clienteId:usuario.id,horarioId:accionPendiente.horarioId,fechaClase:accionPendiente.fecha});
     if (res.ok) {
-      showMsg('conf-msg',`âœ“ EstÃ¡s en posiciÃ³n #${res.posicion}. Te avisaremos si hay cupo.`,'success');
+      showMsg('conf-msg',`&#x2713; EstÃ¡s en posiciÃ³n #${res.posicion}. Te avisaremos si hay cupo.`,'success');
       accionPendiente = null;
       btn.textContent='Cerrar';
       btn.disabled=false;
@@ -1120,7 +1120,7 @@ async function abrirMisReservas() {
 
   const res = await api('getMisReservas', {clienteId: usuario.id});
   if (!res.ok || !res.reservas.length) {
-    c.innerHTML = '<div class="empty-state"><div class="empty-icon">ðŸ“…</div><p>No tenÃ©s reservas prÃ³ximas</p></div>';
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x1F4C5;</div><p>No tenÃ©s reservas prÃ³ximas</p></div>';
     return;
   }
 
@@ -1214,7 +1214,7 @@ function calDiaClick(fecha) {
 
 function renderListaReservas() {
   const c = document.getElementById('mis-reservas-content');
-  const fmtHoraUI = t => { if(!t) return 'â€”'; const p=String(t).split(':'); return p[0].padStart(2,'0')+':'+(p[1]||'00'); };
+  const fmtHoraUI = t => { if(!t) return '&mdash;'; const p=String(t).split(':'); return p[0].padStart(2,'0')+':'+(p[1]||'00'); };
 
   // Agrupar por mes
   let htmlPorMes = '';
@@ -1232,7 +1232,7 @@ function renderListaReservas() {
     htmlPorMes += `<div class="reserva-item" data-fecha="${r.fecha_clase}" style="padding:12px 14px">
       <div class="reserva-info">
         <div class="r-fecha">${DIAS[d.getDay()]} ${d.getDate()} ${MESES_SHORT[d.getMonth()]}</div>
-        <div class="r-clase" style="font-size:13px">${h ? fmtHoraUI(h.hora) + ' Â· ' + h.dia : 'â€”'}</div>
+        <div class="r-clase" style="font-size:13px">${h ? fmtHoraUI(h.hora) + ' Â· ' + h.dia : '&mdash;'}</div>
         <div class="r-inst">${h ? h.instructor : ''}</div>
       </div>
       ${r.estado==='activa'
@@ -1270,11 +1270,11 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--gold-light);line-height:1.2;margin-bottom:24px">Â¿TenÃ©s alguna<br><em style="color:var(--gold)">consulta?</em></h2>
       <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:32px">
         <div style="display:flex;align-items:center;gap:12px;color:#aaa;font-size:13px">
-          <span style="color:var(--gold);font-size:16px">ðŸ“</span>
+          <span style="color:var(--gold);font-size:16px">&#x1F4CD;</span>
           Villa Ballester, Provincia de Buenos Aires, Argentina
         </div>
         <div style="display:flex;align-items:center;gap:12px;color:#aaa;font-size:13px">
-          <span style="color:var(--gold);font-size:16px">ðŸ“±</span>
+          <span style="color:var(--gold);font-size:16px">&#x1F4F1;</span>
           +54 9 11 3569-8828
         </div>
       </div>
@@ -1314,7 +1314,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
   <div class="modal" style="max-width:500px;max-height:85vh;overflow-y:auto">
     <div class="modal-header" style="padding-bottom:12px">
       <h2 class="modal-title">CÃ³mo usar la app</h2>
-      <button class="modal-close" onclick="cerrarModal('modal-ayuda')">âœ•</button>
+      <button class="modal-close" onclick="cerrarModal('modal-ayuda')">&#x2715;</button>
     </div>
 
     <div style="display:flex;flex-direction:column;gap:20px">
@@ -1335,8 +1335,8 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
         <ol style="padding-left:18px;font-size:13px;color:#555;line-height:2">
           <li>TocÃ¡ <strong>Ingresar</strong> y escribÃ­ tu DNI</li>
           <li>Si tenÃ©s contraseÃ±a, ingresÃ¡la directamente</li>
-          <li>Si no, tocÃ¡ <em>Prefiero usar cÃ³digo por email</em> â€” te llegarÃ¡ un cÃ³digo de 6 dÃ­gitos</li>
-          <li>Para configurar contraseÃ±a, usÃ¡ el Ã­cono ðŸ”‘ en el encabezado</li>
+          <li>Si no, tocÃ¡ <em>Prefiero usar cÃ³digo por email</em> &mdash; te llegarÃ¡ un cÃ³digo de 6 dÃ­gitos</li>
+          <li>Para configurar contraseÃ±a, usÃ¡ el Ã­cono &#x1F511; en el encabezado</li>
         </ol>
       </div>
 
@@ -1375,7 +1375,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
       <div>
         <div style="font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px">Mis datos</div>
         <ul style="padding-left:18px;font-size:13px;color:#555;line-height:2">
-          <li>TocÃ¡ <strong>ðŸ‘¤ Mis datos</strong> para ver y actualizar tu perfil</li>
+          <li>TocÃ¡ <strong>&#x1F464; Mis datos</strong> para ver y actualizar tu perfil</li>
           <li>PodÃ©s cambiar tu nombre, email y telÃ©fono</li>
           <li>El DNI no se puede modificar (es tu identificador)</li>
         </ul>
