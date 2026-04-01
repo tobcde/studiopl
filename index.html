@@ -13,12 +13,6 @@
   <meta name="apple-mobile-web-app-title" content="Studio PL">
   <meta name="theme-color" content="#f5f0eb">
   <link rel="manifest" href="manifest.json">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Studio PL">
-  <meta name="theme-color" content="#1a1a1a">
-  <link rel="manifest" href="manifest.json">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -240,6 +234,24 @@
     .check-group { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
     .check-opt { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--dark); cursor:pointer; font-weight:400; text-transform:none; letter-spacing:0; }
     .check-opt input[type=checkbox] { accent-color:var(--gold); width:14px; height:14px; flex-shrink:0; }
+
+    /* SECCION CONTACTO */
+    .contacto-section { background:var(--dark); padding:48px 48px 56px; margin-top:0; }
+    .contacto-inner { max-width:1200px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap; }
+    .contacto-info { display:flex; flex-direction:column; gap:10px; }
+    .contacto-eyebrow { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:4px; }
+    .contacto-nombre { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300; color:var(--gold-light); }
+    .contacto-dato { font-size:12px; color:var(--muted); letter-spacing:.5px; display:flex; align-items:center; gap:8px; }
+    .contacto-dato a { color:var(--muted); text-decoration:none; }
+    .contacto-dato a:hover { color:var(--gold-light); }
+    .btn-whatsapp { display:inline-flex; align-items:center; gap:10px; background:#25d366; color:#fff; border:none; padding:14px 28px; font-size:11px; letter-spacing:2px; text-transform:uppercase; cursor:pointer; font-family:'Montserrat',sans-serif; text-decoration:none; transition:all .2s; white-space:nowrap; }
+    .btn-whatsapp:hover { background:#1ebe5d; }
+    .btn-whatsapp svg { width:18px; height:18px; fill:#fff; flex-shrink:0; }
+    @media(max-width:640px) {
+      .contacto-section { padding:36px 16px 48px; }
+      .contacto-inner { flex-direction:column; align-items:flex-start; gap:24px; }
+      .contacto-nombre { font-size:22px; }
+    }
   </style>
 </head>
 <body>
@@ -1246,6 +1258,24 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 </script>
 
 <!-- BOT&#211;N AYUDA -->
+
+<!-- SECCION CONTACTO -->
+<section class="contacto-section">
+  <div class="contacto-inner">
+    <div class="contacto-info">
+      <div class="contacto-eyebrow">Encontranos</div>
+      <div class="contacto-nombre">Studio PL</div>
+      <div class="contacto-dato">&#128205; Villa Ballester, Buenos Aires</div>
+      <div class="contacto-dato">&#128222; <a href="tel:+5491135698828">+54 9 11 3569-8828</a></div>
+      <div class="contacto-dato">&#9993;&#65039; Seguinos en Instagram &#64;studiopl.pilates</div>
+    </div>
+    <a class="btn-whatsapp" href="https://wa.me/5491135698828?text=Hola%20Studio%20PL%2C%20quiero%20consultar%20sobre%20clases" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      Escribinos por WhatsApp
+    </a>
+  </div>
+</section>
+
 <button onclick="abrirModal('modal-ayuda')" style="position:fixed;bottom:24px;right:24px;z-index:900;width:44px;height:44px;border-radius:50%;background:var(--dark);border:1px solid var(--gold);color:var(--gold-light);font-size:18px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.25);transition:all .2s;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:300" onmouseover="this.style.background='var(--gold);this.style.color='var(--dark)'" title="Ayuda">?</button>
 
 <!-- MODAL AYUDA CLIENTA -->
@@ -1337,14 +1367,6 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 
 <!-- VERSION BADGE -->
 <div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.5</div>
-
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  });
-}
-</script>
 
 <script>
 if ('serviceWorker' in navigator) {
