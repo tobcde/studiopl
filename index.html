@@ -324,33 +324,36 @@
       <button class="modal-close" onclick="cerrarModal('modal-login')">&#10005;</button>
     </div>
 
-    <!-- Paso 1: DNI -->
+    <!-- Vista principal: DNI + password juntos -->
     <div id="login-s1">
       <div id="login-msg"></div>
+      <!-- Boton bio (solo visible si hay bio registrado) -->
+      <div id="login-bio-wrap" style="display:none;margin-bottom:20px">
+        <button class="btn-primary" onclick="loginBioCliente()" style="background:var(--gold);color:var(--dark);display:flex;align-items:center;justify-content:center;gap:8px;width:100%">
+          &#128274; Ingresar con huella / Face ID
+        </button>
+        <div style="display:flex;align-items:center;gap:10px;margin-top:16px;margin-bottom:4px">
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+          <span style="font-size:10px;color:var(--muted);letter-spacing:1px">O CON DNI</span>
+          <div style="flex:1;height:1px;background:var(--border)"></div>
+        </div>
+      </div>
       <div class="form-group">
         <label>DNI</label>
         <input type="text" id="login-dni" placeholder="Sin puntos ni espacios" inputmode="numeric"
-          onkeydown="if(event.key==='Enter')checkLoginMethod()">
+          onkeydown="if(event.key==='Enter')document.getElementById('login-password').focus()">
       </div>
-      <button class="btn-primary" onclick="checkLoginMethod()">Continuar</button>
-      <button id="btn-bio-cliente" class="btn-secondary" onclick="loginBioCliente()" style="display:none;margin-top:10px;display:none">&#128274; Ingresar con huella / Face ID</button>
-    </div>
-
-    <!-- Paso 2a: contrase&#241;a -->
-    <div id="login-s2a" style="display:none">
-      <div id="login-msg2a"></div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:20px">Ingres&#225; tu contrase&#241;a.</p>
       <div class="form-group" style="position:relative">
-        <label>Contrase&#241;a</label>
-        <input type="password" id="login-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" onkeydown="if(event.key==='Enter')doLoginConPassword()">
+        <label>Contrase&#241;a <span id="login-pass-opt" style="font-weight:300;color:var(--muted)">(opcional si ten&#233;s una)</span></label>
+        <input type="password" id="login-password" placeholder="Dej&#225; vac&#237;o para recibir c&#243;digo por email"
+          onkeydown="if(event.key==='Enter')doLoginFlexible()">
         <button onclick="togglePass('login-password')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
       </div>
-      <button class="btn-primary" onclick="doLoginConPassword()">Ingresar</button>
-      <button class="btn-secondary" style="margin-top:10px" onclick="usarCodigo()">Prefiero usar c&#243;digo por email</button>
-      <button class="btn-secondary" style="margin-top:8px;color:var(--gold);border-color:transparent" onclick="olvideMiPassword()">Olvid&#233; mi contrase&#241;a</button>
+      <button class="btn-primary" onclick="doLoginFlexible()">Ingresar</button>
+      <button class="btn-secondary" style="margin-top:8px;color:var(--gold);border-color:transparent;font-size:10px" onclick="olvideMiPasswordDesdeS1()">Olvid&#233; mi contrase&#241;a</button>
     </div>
 
-    <!-- Paso 2b: c&#243;digo -->
+    <!-- Paso codigo por email -->
     <div id="login-s2b" style="display:none">
       <div id="login-msg2b"></div>
       <p id="login-email-hint" style="font-size:13px;color:var(--muted);margin-bottom:20px">Enviamos un c&#243;digo de 6 d&#237;gitos a tu email.</p>
@@ -364,7 +367,7 @@
       <button class="btn-secondary" onclick="volverLoginDni()">Volver</button>
     </div>
 
-    <!-- Paso 3: reset enviado -->
+    <!-- Reset enviado -->
     <div id="login-s3" style="display:none;text-align:center;padding:10px 0">
       <div style="font-size:32px;margin-bottom:12px">&#128231;</div>
       <p style="font-size:14px;color:var(--dark);margin-bottom:8px">Te enviamos un link para resetear tu contrase&#241;a.</p>
@@ -616,7 +619,8 @@ async function loginBioCliente() {
   var errEl = document.getElementById('login-msg');
   if (!bioClienteDisponible()) return;
   var bioId = localStorage.getItem('spl_bio_id');
-  if (!bioId) return; // sin bio registrado, no hacer nada
+  var bioUid = localStorage.getItem('spl_bio_uid');
+  if (!bioId || !bioUid) return;
   try {
     var ch = new Uint8Array(32); window.crypto.getRandomValues(ch);
     var bin = atob(bioId.replace(/-/g,'+').replace(/_/g,'/'));
@@ -630,22 +634,22 @@ async function loginBioCliente() {
       timeout: 60000
     }});
     if (!cred) return;
-    // Recuperar usuario desde localStorage
-    var savedUser = JSON.parse(localStorage.getItem('spl_user') || 'null');
-    var savedUid = localStorage.getItem('spl_bio_uid');
-    if (savedUser && savedUser.id === savedUid) {
-      usuario = savedUser;
-      cerrarModal('modal-login');
-      actualizarUI();
-      cargarHorarios();
+    // Bio OK -> hacer login real con el GAS usando el clienteId guardado
+    showMsg('login-msg', 'Verificando...', '');
+    var res = await api('getClientePerfil', {clienteId: bioUid});
+    if (res.ok && res.cliente) {
+      _loginExitoso(res.cliente);
     } else {
-      if (errEl) errEl.innerHTML = '<div class="msg error">Sesion expirada. Ingresa con tu DNI.</div>';
+      // Si falla, limpiar bio y pedir login normal
+      if (errEl) errEl.innerHTML = '<div class="msg error">No se pudo verificar tu cuenta. Ingresa con DNI.</div>';
       localStorage.removeItem('spl_bio_id');
       localStorage.removeItem('spl_bio_uid');
+      document.getElementById('login-bio-wrap').style.display = 'none';
     }
   } catch(e) {
-    // Usuario cancelo &#8212; no mostrar error
+    // Usuario cancelo - no mostrar error
     console.log('Bio cancelado:', e.message);
+    showMsg('login-msg', '', '');
   }
 }
 // == FIN BIOMETRICO CLIENTE =================================================
@@ -655,8 +659,8 @@ document.addEventListener('DOMContentLoaded', () => {
   cargarHorarios();
   // Mostrar boton bio si esta registrado
   if (localStorage.getItem('spl_bio_id')) {
-    var bb = document.getElementById('btn-bio-cliente');
-    if (bb) bb.style.display = 'block';
+    var bw = document.getElementById('login-bio-wrap');
+    if (bw) bw.style.display = 'block';
   }
   // Detectar link de reset de contrasena
   const params = new URLSearchParams(window.location.search);
@@ -722,52 +726,75 @@ document.addEventListener('click', function(e) {
 
 function logout() { localStorage.removeItem('spl_user'); usuario=null; actualizarUI(); cargarHorarios(); }
 
-async function checkLoginMethod() {
-  const dni = document.getElementById('login-dni').value.trim().replace(/\D/g,'');
+// Nuevo flujo unificado: DNI + password opcional en un solo paso
+async function doLoginFlexible() {
+  var dni = document.getElementById('login-dni').value.trim().replace(/\D/g,'');
+  var password = document.getElementById('login-password').value;
   if (!dni) return showMsg('login-msg','Ingresa tu DNI','error');
   showMsg('login-msg','Verificando...','');
-  const res = await api('checkDni', {dni});
-  if (!res.ok) return showMsg('login-msg', res.error, 'error');
-  // Guardar DNI para los siguientes pasos
-  window._loginDni = dni;
-  document.getElementById('login-s1').style.display='none';
-  if (res.tienePassword) {
-    document.getElementById('login-s2a').style.display='block';
-    document.getElementById('login-password').focus();
+
+  if (password) {
+    // Tiene password -> intentar login con password
+    var res = await api('loginConPassword', {dni: dni, password: password});
+    if (res.ok) {
+      _loginExitoso(res.cliente);
+    } else {
+      showMsg('login-msg', res.error || 'DNI o contrase&ntilde;a incorrectos', 'error');
+    }
   } else {
-    // Sin contrasena -> mandar codigo al email del cliente
-    const r2 = await api('loginCliente', {dni});
+    // Sin password -> verificar que existe el DNI y mandar codigo
+    var r2 = await api('loginCliente', {dni: dni});
     if (r2.ok) {
+      window._loginDni = dni;
+      document.getElementById('login-s1').style.display='none';
       document.getElementById('login-s2b').style.display='block';
       if (r2.emailMasked) document.getElementById('login-email-hint').textContent = 'Enviamos un codigo a ' + r2.emailMasked;
       document.getElementById('login-codigo').focus();
     } else {
-      document.getElementById('login-s1').style.display='block';
       showMsg('login-msg', r2.error, 'error');
     }
   }
 }
 
-async function doLoginConPassword() {
-  const dni = window._loginDni;
-  const password = document.getElementById('login-password').value;
-  if (!password) return showMsg('login-msg2a','Ingresa tu contrasena','error');
-  showMsg('login-msg2a','Verificando...','');
-  const res = await api('loginConPassword', {dni, password});
+async function olvideMiPasswordDesdeS1() {
+  var dni = document.getElementById('login-dni').value.trim().replace(/\D/g,'');
+  if (!dni) return showMsg('login-msg','Ingresa tu DNI primero','error');
+  window._loginDni = dni;
+  var res = await api('loginCliente', {dni: dni});
   if (res.ok) {
-    usuario = res.cliente;
-    localStorage.setItem('spl_user', JSON.stringify(usuario));
-    cerrarModal('modal-login');
-    actualizarUI();
-    cargarHorarios();
-    if (bioClienteDisponible() && !localStorage.getItem('spl_bio_id')) {
-      setTimeout(function(){
-        if (confirm('Activar huella o Face ID para entrar mas rapido la proxima vez?')) registrarBioCliente();
-      }, 800);
-    }
+    document.getElementById('login-s1').style.display='none';
+    document.getElementById('login-s3').style.display='block';
   } else {
-    showMsg('login-msg2a', res.error, 'error');
+    showMsg('login-msg', res.error || 'No se encontro el DNI', 'error');
   }
+}
+
+// Mantener checkLoginMethod como alias por compatibilidad
+async function checkLoginMethod() { return doLoginFlexible(); }
+
+// Funcion centralizada de login exitoso
+function _loginExitoso(cliente) {
+  usuario = cliente;
+  localStorage.setItem('spl_user', JSON.stringify(usuario));
+  cerrarModal('modal-login');
+  actualizarUI();
+  cargarHorarios();
+  // Ofrecer bio si disponible y no registrado
+  if (bioClienteDisponible() && !localStorage.getItem('spl_bio_id')) {
+    setTimeout(function(){
+      if (confirm('Activar huella o Face ID para entrar mas rapido la proxima vez?')) registrarBioCliente();
+    }, 800);
+  }
+}
+
+async function doLoginConPassword() {
+  var dni = window._loginDni || document.getElementById('login-dni').value.trim().replace(/\D/g,'');
+  var password = document.getElementById('login-password').value;
+  if (!password) return showMsg('login-msg','Ingresa tu contrasena','error');
+  showMsg('login-msg','Verificando...','');
+  var res = await api('loginConPassword', {dni: dni, password: password});
+  if (res.ok) { _loginExitoso(res.cliente); }
+  else { showMsg('login-msg', res.error, 'error'); }
 }
 
 async function usarCodigo() {
@@ -802,8 +829,8 @@ async function olvideMiPassword() {
 }
 
 function volverLoginDni() {
-  ['login-s2a','login-s2b','login-s3'].forEach(id => {
-    const el = document.getElementById(id);
+  ['login-s2a','login-s2b','login-s3'].forEach(function(id) {
+    var el = document.getElementById(id);
     if (el) el.style.display='none';
   });
   document.getElementById('login-s1').style.display='block';
@@ -816,21 +843,8 @@ async function verificarCodigo() {
   if (!codigo || codigo.length !== 6) return showMsg('login-msg2b','Ingresa el codigo de 6 digitos','error');
   showMsg('login-msg2b','Verificando...','');
   const res = await api('verificarCodigo', {dni, codigo});
-  if (res.ok) {
-    usuario = res.cliente;
-    localStorage.setItem('spl_user', JSON.stringify(usuario));
-    cerrarModal('modal-login');
-    actualizarUI();
-    cargarHorarios();
-    // Ofrecer bio si disponible y no registrado
-    if (bioClienteDisponible() && !localStorage.getItem('spl_bio_id')) {
-      setTimeout(function(){
-        if (confirm('Activar huella o Face ID para entrar mas rapido la proxima vez?')) registrarBioCliente();
-      }, 800);
-    }
-  } else {
-    showMsg('login-msg2b', res.error, 'error');
-  }
+  if (res.ok) { _loginExitoso(res.cliente); }
+  else { showMsg('login-msg2b', res.error, 'error'); }
 }
 
 // &#9472;&#9472; MIS DATOS &#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;
@@ -1446,7 +1460,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 </div>
 
 <!-- VERSION BADGE -->
-<div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.2</div>
+<div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.3</div>
 
 <script>
 if ('serviceWorker' in navigator) {
