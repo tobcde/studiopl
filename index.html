@@ -333,6 +333,7 @@
           onkeydown="if(event.key==='Enter')checkLoginMethod()">
       </div>
       <button class="btn-primary" onclick="checkLoginMethod()">Continuar</button>
+      <button id="btn-bio-cliente" class="btn-secondary" onclick="loginBioCliente()" style="display:none;margin-top:10px;display:none">&#128274; Ingresar con huella / Face ID</button>
     </div>
 
     <!-- Paso 2a: contrase&#241;a -->
@@ -576,7 +577,7 @@
 </div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbwu_JRpCVFgF8GQN660EwvO5fG-cK05R2dT-EZKRi6t6Fh81Ki64Jwt01cAmrnTpskw/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbx8x5zP4BXGbR9M4eVNHyjNOOCzkxSdK007dAs0qgl5vMruQQiiKW4rlino5gJTZ1sT/exec';
 let usuario = JSON.parse(localStorage.getItem('spl_user') || 'null');
 let horariosData = [];
 let filtroActivo = 'todos';
@@ -588,9 +589,75 @@ const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto'
 const MESES_SHORT = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const DIAS = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
 
+
+// == BIOMETRICO CLIENTE =====================================================
+function bioClienteDisponible() { return !!(window.PublicKeyCredential && navigator.credentials); }
+
+async function registrarBioCliente() {
+  if (!bioClienteDisponible() || !usuario) return;
+  try {
+    var ch = new Uint8Array(32); window.crypto.getRandomValues(ch);
+    var uid = new TextEncoder().encode('spl_' + usuario.id);
+    var cred = await navigator.credentials.create({publicKey:{
+      challenge: ch,
+      rp: {name:'Studio PL', id: location.hostname},
+      user: {id: uid, name: usuario.dni||usuario.id, displayName: usuario.nombre||'Cliente'},
+      pubKeyCredParams: [{alg:-7,type:'public-key'},{alg:-257,type:'public-key'}],
+      authenticatorSelection: {userVerification:'required'},
+      timeout: 60000
+    }});
+    if (!cred) return;
+    localStorage.setItem('spl_bio_id', cred.id);
+    localStorage.setItem('spl_bio_uid', usuario.id);
+  } catch(e) { console.log('Bio registro cancelado:', e.message); }
+}
+
+async function loginBioCliente() {
+  var errEl = document.getElementById('login-msg');
+  if (!bioClienteDisponible()) return;
+  var bioId = localStorage.getItem('spl_bio_id');
+  if (!bioId) return; // sin bio registrado, no hacer nada
+  try {
+    var ch = new Uint8Array(32); window.crypto.getRandomValues(ch);
+    var bin = atob(bioId.replace(/-/g,'+').replace(/_/g,'/'));
+    var bytes = new Uint8Array(bin.length);
+    for (var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+    var cred = await navigator.credentials.get({publicKey:{
+      challenge: ch,
+      rpId: location.hostname,
+      allowCredentials: [{id:bytes.buffer, type:'public-key'}],
+      userVerification: 'required',
+      timeout: 60000
+    }});
+    if (!cred) return;
+    // Recuperar usuario desde localStorage
+    var savedUser = JSON.parse(localStorage.getItem('spl_user') || 'null');
+    var savedUid = localStorage.getItem('spl_bio_uid');
+    if (savedUser && savedUser.id === savedUid) {
+      usuario = savedUser;
+      cerrarModal('modal-login');
+      actualizarUI();
+      cargarHorarios();
+    } else {
+      if (errEl) errEl.innerHTML = '<div class="msg error">Sesion expirada. Ingresa con tu DNI.</div>';
+      localStorage.removeItem('spl_bio_id');
+      localStorage.removeItem('spl_bio_uid');
+    }
+  } catch(e) {
+    // Usuario cancelo &#8212; no mostrar error
+    console.log('Bio cancelado:', e.message);
+  }
+}
+// == FIN BIOMETRICO CLIENTE =================================================
+
 document.addEventListener('DOMContentLoaded', () => {
   actualizarUI();
   cargarHorarios();
+  // Mostrar boton bio si esta registrado
+  if (localStorage.getItem('spl_bio_id')) {
+    var bb = document.getElementById('btn-bio-cliente');
+    if (bb) bb.style.display = 'block';
+  }
   // Detectar link de reset de contrasena
   const params = new URLSearchParams(window.location.search);
   const token = params.get('reset_token');
@@ -612,15 +679,17 @@ async function api(action, params = {}) {
 }
 
 function actualizarBannerCreditos(info) {
-  let banner = document.getElementById('creditos-banner');
+  var banner = document.getElementById('creditos-banner');
   if (!info || !info.tipoAbono) { if (banner) banner.style.display='none'; return; }
   if (!banner) return;
-  if (info.ilimitado) {
-    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val">999 clases</span>`;
+  if (info.tipoAbono === 'NUEVA') {
+    banner.innerHTML = '<span class="cr-plan">Cuenta nueva</span><span class="cr-val" style="color:var(--muted)">Sin abono asignado</span>';
+  } else if (info.ilimitado) {
+    banner.innerHTML = '<span class="cr-plan">'+info.tipoAbono+'</span><span class="cr-val">Clases ilimitadas</span>';
   } else {
-    const rest = info.creditosRestantes;
-    const color = rest===0?'#c0392b':rest<=1?'#c9a96e':'#6b8f71';
-    banner.innerHTML = `<span class="cr-plan">${info.tipoAbono}</span><span class="cr-val" style="color:${color}">${rest} credito${rest!==1?'s':''} esta semana</span>`;
+    var rest = info.creditosRestantes !== undefined ? info.creditosRestantes : '-';
+    var color = rest===0?'#c0392b':rest<=1?'#c9a96e':'#6b8f71';
+    banner.innerHTML = '<span class="cr-plan">'+info.tipoAbono+'</span><span class="cr-val" style="color:'+color+'">'+rest+' credito'+(rest!==1?'s':'')+' esta semana</span>';
   }
   banner.style.display = 'flex';
 }
@@ -691,6 +760,11 @@ async function doLoginConPassword() {
     cerrarModal('modal-login');
     actualizarUI();
     cargarHorarios();
+    if (bioClienteDisponible() && !localStorage.getItem('spl_bio_id')) {
+      setTimeout(function(){
+        if (confirm('Activar huella o Face ID para entrar mas rapido la proxima vez?')) registrarBioCliente();
+      }, 800);
+    }
   } else {
     showMsg('login-msg2a', res.error, 'error');
   }
@@ -748,6 +822,12 @@ async function verificarCodigo() {
     cerrarModal('modal-login');
     actualizarUI();
     cargarHorarios();
+    // Ofrecer bio si disponible y no registrado
+    if (bioClienteDisponible() && !localStorage.getItem('spl_bio_id')) {
+      setTimeout(function(){
+        if (confirm('Activar huella o Face ID para entrar mas rapido la proxima vez?')) registrarBioCliente();
+      }, 800);
+    }
   } else {
     showMsg('login-msg2b', res.error, 'error');
   }
@@ -1267,7 +1347,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
       <div class="contacto-nombre">Studio PL</div>
       <div class="contacto-dato">&#128205; Villa Ballester, Buenos Aires</div>
       <div class="contacto-dato">&#128222; <a href="tel:+5491135698828">+54 9 11 3569-8828</a></div>
-      <div class="contacto-dato">&#9993;&#65039; Seguinos en Instagram &#64;studiopl.pilates</div>
+      <div class="contacto-dato">&#9993;&#65039; Seguinos en Instagram &#64;pilates.studiopl</div>
     </div>
     <a class="btn-whatsapp" href="https://wa.me/5491135698828?text=Hola%20Studio%20PL%2C%20quiero%20consultar%20sobre%20clases" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
@@ -1366,7 +1446,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 </div>
 
 <!-- VERSION BADGE -->
-<div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.0</div>
+<div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.2</div>
 
 <script>
 if ('serviceWorker' in navigator) {
