@@ -580,7 +580,7 @@
 </div>
 
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbx8x5zP4BXGbR9M4eVNHyjNOOCzkxSdK007dAs0qgl5vMruQQiiKW4rlino5gJTZ1sT/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxXDPzJ7PDURlObekwVwRh59vfQUa26EnRSp160BekmewWhbfn4uN4hymfUI_8fQjqK/exec';
 let usuario = JSON.parse(localStorage.getItem('spl_user') || 'null');
 let horariosData = [];
 let filtroActivo = 'todos';
@@ -774,6 +774,12 @@ async function checkLoginMethod() { return doLoginFlexible(); }
 
 // Funcion centralizada de login exitoso
 function _loginExitoso(cliente) {
+  // Preservar campos del usuario guardado que el GAS a veces no devuelve correctos
+  var saved = JSON.parse(localStorage.getItem('spl_user') || 'null');
+  if (saved && saved.id === cliente.id) {
+    if (!cliente.dni && saved.dni) cliente.dni = saved.dni;
+    if (!cliente.telefono && saved.telefono) cliente.telefono = saved.telefono;
+  }
   usuario = cliente;
   localStorage.setItem('spl_user', JSON.stringify(usuario));
   cerrarModal('modal-login');
@@ -853,8 +859,10 @@ async function abrirMisDatos() {
   document.getElementById('mis-datos-msg').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   abrirModal('modal-mis-datos');
   const res = await api('getClientePerfil', {clienteId: usuario.id});
-  const c = res?.ok ? res.cliente : usuario;
-  document.getElementById('md-dni').value = c.dni || '-';
+  var c = res?.ok ? res.cliente : usuario;
+  // Preservar dni del localStorage si el perfil lo devuelve vacio
+  var dniMostrar = (c.dni && c.dni !== '') ? c.dni : (usuario.dni || '-');
+  document.getElementById('md-dni').value = dniMostrar;
   document.getElementById('md-nombre').value = c.nombre || '';
   document.getElementById('md-email').value = c.email || '';
   document.getElementById('md-telefono').value = c.telefono || '';
@@ -1460,7 +1468,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 </div>
 
 <!-- VERSION BADGE -->
-<div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.3</div>
+<div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.5</div>
 
 <script>
 if ('serviceWorker' in navigator) {
