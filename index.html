@@ -252,6 +252,47 @@
       .contacto-inner { flex-direction:column; align-items:flex-start; gap:24px; }
       .contacto-nombre { font-size:22px; }
     }
+
+    /* ERROR TOAST en registro */
+    #reg-toast {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--error);
+      color: #fff;
+      padding: 12px 20px;
+      font-size: 12px;
+      letter-spacing: .5px;
+      z-index: 2000;
+      max-width: 320px;
+      width: calc(100% - 40px);
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,.3);
+      border-radius: 2px;
+      animation: toastIn .2s ease;
+    }
+    @keyframes toastIn { from { opacity:0; transform:translateX(-50%) translateY(10px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }
+    /* Mensaje de error en registro sticky arriba del form */
+    #reg-step1 .reg-error-sticky {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      margin: 0 -36px 16px;
+      padding: 12px 20px;
+      background: #fdf0ee;
+      color: var(--error);
+      border-bottom: 2px solid var(--error);
+      font-size: 12px;
+      letter-spacing: .3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    @media(max-width:640px){
+      #reg-step1 .reg-error-sticky { margin: 0 -14px 12px; }
+    }
   </style>
 </head>
 <body>
@@ -1352,7 +1393,32 @@ async function cancelarReserva(reservaId) {
 
 function abrirModal(id) { document.getElementById(id).classList.add('open'); }
 function cerrarModal(id) { document.getElementById(id).classList.remove('open'); }
-function showMsg(id, txt, tipo) { const el=document.getElementById(id); if(el) el.innerHTML=txt?`<div class="msg ${tipo}">${txt}</div>`:''; }
+function showMsg(id, txt, tipo) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = txt ? '<div class="msg ' + tipo + '">' + txt + '</div>' : '';
+  if (txt && tipo === 'error' && id === 'reg-msg') {
+    // Scroll al mensaje dentro del modal
+    var modal = document.querySelector('#modal-registro .modal');
+    if (modal) {
+      // Si el mensaje esta arriba y el modal esta scrolleado, volver arriba
+      modal.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    // Mostrar toast flotante para que se vea sin importar donde este
+    mostrarToastError(txt);
+  }
+}
+
+function mostrarToastError(txt) {
+  var toast = document.getElementById('reg-toast');
+  if (!toast) return;
+  toast.textContent = txt;
+  toast.style.display = 'block';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function() {
+    toast.style.display = 'none';
+  }, 4000);
+}
 
 document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); });
@@ -1468,7 +1534,9 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 </div>
 
 <!-- VERSION BADGE -->
-<div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.5</div>
+<div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.6</div>
+
+<div id="reg-toast"></div>
 
 <script>
 if ('serviceWorker' in navigator) {
