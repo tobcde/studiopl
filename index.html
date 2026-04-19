@@ -1494,7 +1494,14 @@ function filtrar(dia, btn) {
 
 function renderHorarios() {
   const grid = document.getElementById('clases-grid');
-  const filtrados = filtroActivo==='todos' ? horariosData : horariosData.filter(h=>h.dia===filtroActivo);
+  // Orden por d\u00eda de la semana + hora (temprano \u2192 tarde)
+  const ordenDia = { Lunes:1, Martes:2, 'Mi\u00e9rcoles':3, Miercoles:3, Jueves:4, Viernes:5, 'S\u00e1bado':6, Sabado:6, Domingo:7 };
+  const sorted = [...horariosData].sort((a,b) => {
+    const dd = (ordenDia[a.dia]||9) - (ordenDia[b.dia]||9);
+    if (dd !== 0) return dd;
+    return (a.hora||'').localeCompare(b.hora||'');
+  });
+  const filtrados = filtroActivo==='todos' ? sorted : sorted.filter(h=>h.dia===filtroActivo);
   if (!filtrados.length) { grid.innerHTML='<div class="empty-state"><div class="empty-icon">&#129496;</div><p>No hay clases disponibles</p></div>'; return; }
 
   // Banner único si hay fechas post-vencimiento en cualquier horario
