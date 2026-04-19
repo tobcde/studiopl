@@ -580,6 +580,11 @@
     </div>
     <!-- Calendario -->
     <div id="cal-grid" style="display:none;margin-bottom:14px"></div>
+    <!-- Toggle de filtro -->
+    <div id="mr-filtros" style="display:none;gap:8px;margin-bottom:14px;justify-content:center">
+      <button id="mr-filtro-activas" class="filter-btn active" onclick="setFiltroMisReservas('activas')">Pr&#243;ximas</button>
+      <button id="mr-filtro-todas" class="filter-btn" onclick="setFiltroMisReservas('todas')">Historial</button>
+    </div>
     <!-- Lista de reservas -->
     <div id="mis-reservas-content"><div class="loading"><div class="spinner"></div></div></div>
   </div>
@@ -1686,7 +1691,10 @@ async function ejecutarAccion() {
   } else if (accionPendiente.tipo==='cancelar') {
     res=await api('cancelarReserva',{reservaId:accionPendiente.reservaId,clienteId:usuario.id});
     if (res.ok) {
-      showMsg('conf-msg', res.refunded ? '&#10003; Reserva cancelada. Te devolvimos el cr\u00e9dito.' : '&#10003; Reserva cancelada.', 'success');
+      var msgCancel = res.refunded
+        ? '&#10003; Reserva cancelada. Te devolvimos el cr\u00e9dito.'
+        : '&#10003; Reserva cancelada. El cr\u00e9dito no se devuelve (clase ya pasada o fuera del plazo).';
+      showMsg('conf-msg', msgCancel, 'success');
       accionPendiente = null;
       btn.textContent='Cerrar';
       btn.disabled=false;
@@ -1705,7 +1713,9 @@ async function ejecutarAccion() {
 }
 
 let _misReservas = [];
+let _misReservasAll = [];
 let _calMes = new Date();
+let _filtroMisReservas = 'activas'; // 'activas' (default) | 'todas'
 
 async function abrirMisReservas() {
   abrirModal('modal-mis-reservas');
@@ -1713,29 +1723,49 @@ async function abrirMisReservas() {
   c.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
   document.getElementById('cal-nav').style.display = 'none';
   document.getElementById('cal-grid').style.display = 'none';
+  document.getElementById('mr-filtros').style.display = 'none';
 
   const res = await api('getMisReservas', {clienteId: usuario.id});
   window._misReservasCache = res.ok ? res.reservas : [];
   if (!res.ok || !res.reservas.length) {
-    c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128197;</div><p>No tenes reservas proximas</p></div>';
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128197;</div><p>No ten\u00e9s reservas registradas</p></div>';
     return;
   }
 
-  // Filtro por fecha: comparacion de strings yyyy-MM-dd (timezone-safe)
-  var hoyStr = new Date().toLocaleDateString('sv'); // "2026-04-01" en timezone local
-  _misReservas = res.reservas.map(r => ({
-    ...r,
-    fecha_clase: normFechaFE(r.fecha_clase)
-  })).filter(r => r.fecha_clase >= hoyStr);
+  // Normalizar fecha a yyyy-MM-dd para ordenar
+  _misReservasAll = res.reservas.map(r => ({...r, fecha_clase: normFechaFE(r.fecha_clase)}));
+  aplicarFiltroMisReservas();
+}
 
-  // Mostrar navegacion y calendario
+function setFiltroMisReservas(tipo) {
+  _filtroMisReservas = tipo;
+  document.getElementById('mr-filtro-activas').classList.toggle('active', tipo === 'activas');
+  document.getElementById('mr-filtro-todas').classList.toggle('active', tipo === 'todas');
+  aplicarFiltroMisReservas();
+}
+
+function aplicarFiltroMisReservas() {
+  const hoyStr = new Date().toLocaleDateString('sv');
+  if (_filtroMisReservas === 'activas') {
+    _misReservas = _misReservasAll.filter(r => r.estado === 'activa' && r.fecha_clase >= hoyStr);
+  } else {
+    _misReservas = _misReservasAll.slice();
+  }
+
+  const c = document.getElementById('mis-reservas-content');
+  document.getElementById('mr-filtros').style.display = 'flex';
+  if (!_misReservas.length) {
+    const msg = _filtroMisReservas === 'activas' ? 'No ten\u00e9s reservas pr\u00f3ximas' : 'No hay reservas en el historial';
+    c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128197;</div><p>' + msg + '</p></div>';
+    document.getElementById('cal-nav').style.display = 'none';
+    document.getElementById('cal-grid').style.display = 'none';
+    return;
+  }
+
   document.getElementById('cal-nav').style.display = 'flex';
   document.getElementById('cal-grid').style.display = 'block';
-
-  // Ir al mes de la primer reserva
   const primera = new Date(_misReservas[0].fecha_clase + 'T00:00:00');
   _calMes = new Date(primera.getFullYear(), primera.getMonth(), 1);
-
   renderCalendario();
   renderListaReservas();
 }
