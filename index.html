@@ -386,7 +386,7 @@
       </div>
       <div class="form-group" style="position:relative">
         <label>Contrase&#241;a <span id="login-pass-opt" style="font-weight:300;color:var(--muted)">(opcional si ten&#233;s una)</span></label>
-        <input type="password" id="login-password" placeholder="Dej&#225; vac&#237;o para recibir c&#243;digo por email"
+        <input type="password" id="login-password" placeholder="Tu contrase&#241;a"
           onkeydown="if(event.key==='Enter')doLoginFlexible()">
         <button onclick="togglePass('login-password')" style="position:absolute;right:12px;top:34px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:12px">Ver</button>
       </div>
@@ -429,7 +429,7 @@
 
     <div style="background:#f9f6f2;border:1px solid var(--border);padding:12px 16px;margin-bottom:20px;font-size:11px;color:var(--muted);line-height:1.6">
       Tu <strong>DNI</strong> es tu identificador &#250;nico y no se puede modificar.<br>
-      Pod&#233;s actualizar tu nombre, email, tel&#233;fono y fecha de nacimiento.
+      Pod&#233;s actualizar tu nombre, email y tel&#233;fono.
     </div>
 
     <div class="form-group">
@@ -503,6 +503,7 @@
       <div class="form-group"><label>Nombre y Apellido *</label><input type="text" id="reg-nombre" placeholder="Tu nombre completo"></div>
       <div class="form-group"><label>DNI *</label><input type="text" id="reg-dni" placeholder="Sin puntos ni espacios" inputmode="numeric" style="letter-spacing:2px"></div>
       <div class="form-group"><label>Email *</label><input type="email" id="reg-email" placeholder="tu@email.com"></div>
+      <div class="form-group"><label>Contrase&#241;a *</label><input type="password" id="reg-password" placeholder="M&#237;nimo 6 caracteres" minlength="6"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
         <div class="form-group"><label>Tel&#233;fono *</label><input type="tel" id="reg-tel" placeholder="+54 11 ..."></div>
         <div class="form-group"><label>Edad *</label><input type="number" id="reg-edad" placeholder="Ej: 28" min="10" max="99"></div>
@@ -594,7 +595,7 @@
     <div id="conf-msg"></div>
     <div id="conf-detalle" style="background:var(--cream);padding:20px;margin-bottom:24px;border-left:3px solid var(--gold)"></div>
     <button class="btn-primary" id="conf-btn" onclick="ejecutarAccion()">Confirmar</button>
-    <button class="btn-secondary" onclick="cerrarModal('modal-confirmar')">Cancelar</button>
+    <button class="btn-secondary" id="conf-btn-cancel" onclick="cerrarModal('modal-confirmar')">Cancelar</button>
   </div>
 </div>
 
@@ -620,8 +621,32 @@
   </div>
 </div>
 
+<!-- Firebase SDK (compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-check-compat.js"></script>
+
 <script>
-const API_URL = 'https://script.google.com/macros/s/AKfycbxXDPzJ7PDURlObekwVwRh59vfQUa26EnRSp160BekmewWhbfn4uN4hymfUI_8fQjqK/exec';
+// ── Firebase init ───────────────────────────────────────────────────────────
+firebase.initializeApp({
+  apiKey: "AIzaSyD7ycKhwnM0_uu2hQMAgHDAB1g56_06Kps",
+  authDomain: "studiopl-2f662.firebaseapp.com",
+  projectId: "studiopl-2f662",
+  storageBucket: "studiopl-2f662.firebasestorage.app",
+  messagingSenderId: "307831810819",
+  appId: "1:307831810819:web:ed71278c57cf7300d45736"
+});
+
+try {
+  firebase.appCheck().activate('6LfNrL4sAAAAAG4xOEl1pDdX9EPEm8Jr4umEpTvU', true);
+} catch (e) { console.warn('App Check no pudo iniciar:', e.message); }
+
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
+const CF_BASE = 'https://us-central1-studiopl-2f662.cloudfunctions.net';
+
+// ── Estado legacy ───────────────────────────────────────────────────────────
 let usuario = JSON.parse(localStorage.getItem('spl_user') || 'null');
 let horariosData = [];
 let filtroActivo = 'todos';
@@ -629,12 +654,365 @@ let accionPendiente = null;
 let fechaSel = {};
 let _resetToken = null;
 let _resetEmail = null;
+let _abonosCache = [];
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const MESES_SHORT = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
 const DIAS = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+const DIA_NUM = { 'Domingo':0, 'Lunes':1, 'Martes':2, 'Miércoles':3, 'Miercoles':3, 'Jueves':4, 'Viernes':5, 'Sábado':6, 'Sabado':6 };
 
+// ── Helpers ─────────────────────────────────────────────────────────────────
+function _pad(n) { return String(n).padStart(2,'0'); }
+function _dateKey(d) { return d.getFullYear()+'-'+_pad(d.getMonth()+1)+'-'+_pad(d.getDate()); }
 
-// == BIOMETRICO CLIENTE =====================================================
+// Convierte un doc Firestore al shape legacy (Timestamp → "YYYY-MM-DD", duplica camelCase como snake_case)
+function _dsValue(v) {
+  if (v == null) return v;
+  if (v && typeof v.toDate === 'function') return _dateKey(v.toDate());
+  if (Array.isArray(v)) return v.map(_dsValue);
+  if (typeof v === 'object') return _dsObject(v);
+  return v;
+}
+function _dsObject(obj) {
+  const out = {};
+  for (const [k, val] of Object.entries(obj)) {
+    const w = _dsValue(val);
+    out[k] = w;
+    const snake = k.replace(/[A-Z]/g, c => '_' + c.toLowerCase());
+    if (snake !== k && !(snake in obj)) out[snake] = w;
+  }
+  return out;
+}
+
+async function _loadCliente(uid) {
+  const doc = await firebase.firestore().collection('clientes').doc(uid).get();
+  if (!doc.exists) return null;
+  const c = _dsObject({ id: uid, ...doc.data() });
+  // Abono info para creditos
+  if (c.tipoAbono) {
+    if (!_abonosCache.length) {
+      const snap = await firebase.firestore().collection('abonos').get();
+      _abonosCache = snap.docs.map(d => d.data());
+    }
+    const abono = _abonosCache.find(a => a.nombre === c.tipoAbono);
+    if (abono) {
+      const cs = Number(abono.clasesSemana || abono.clases_semana || 0);
+      if (cs >= 999) { c.ilimitado = true; c.creditosRestantes = 999; }
+      else { c.ilimitado = false; c.creditosRestantes = Math.max(0, cs - (c.creditosUsadosSemana || 0)); }
+    }
+  }
+  return c;
+}
+
+// ── Calcula getHorarios client-side (reemplaza el endpoint GAS) ─────────────
+// Devuelve el shape legacy: horarios[].proximas[].{fecha, disponibles, tieneReserva, reservaId, enEspera, postVencimiento, vencidoPlazo, cerrado}
+async function _computeHorarios() {
+  const db = firebase.firestore();
+  const uid = firebase.auth().currentUser ? firebase.auth().currentUser.uid : null;
+
+  const [horariosSnap, configSnap, abonosSnap] = await Promise.all([
+    db.collection('horarios').where('activo','==',true).get(),
+    db.collection('config').doc('general').get(),
+    db.collection('abonos').get(),
+  ]);
+  const horarios = horariosSnap.docs.map(d => ({id:d.id, ...d.data()}));
+  const config = configSnap.exists ? configSnap.data() : {semanasAgenda:4, minutosReserva:120, diasCerrados:[]};
+  _abonosCache = abonosSnap.docs.map(d => d.data());
+
+  // Sin auth: schedule sin cupos ni personalizados (todas las fechas con disponibles=cuposTotales)
+  const diasCerrados = new Set((config.diasCerrados || []).map(d => d.fecha));
+  const semanas = config.semanasAgenda || 4;
+  const minutosReserva = config.minutosReserva || 0;
+  const ahora = Date.now();
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+
+  if (!uid) {
+    const out = horarios.map(h => {
+      const diaNum = DIA_NUM[h.dia]; if (diaNum == null) return null;
+      const proximas = [];
+      for (let s = 0; s < semanas; s++) {
+        const t = new Date(hoy);
+        const diff = (diaNum - t.getDay() + 7) % 7;
+        t.setDate(t.getDate() + diff + s * 7);
+        const fecha = _dateKey(t);
+        proximas.push({ fecha, disponibles: h.cuposTotales||0, tieneReserva: false, reservaId: null, enEspera: 0, postVencimiento: false, vencidoPlazo: false, cerrado: diasCerrados.has(fecha) });
+      }
+      return {...h, cupos_totales: h.cuposTotales, proximas};
+    }).filter(Boolean);
+    return { ok: true, horarios: out, creditosInfo: null };
+  }
+
+  const rangeStart = new Date(hoy);
+  const rangeEnd = new Date(hoy); rangeEnd.setDate(hoy.getDate() + semanas * 7 + 7);
+  const rsTs = firebase.firestore.Timestamp.fromDate(rangeStart);
+  const reTs = firebase.firestore.Timestamp.fromDate(rangeEnd);
+
+  const [reservasSnap, esperaAllSnap, clienteDoc, fijosSnap] = await Promise.all([
+    db.collection('reservas').where('estado','==','activa').where('fechaClase','>=',rsTs).where('fechaClase','<',reTs).get(),
+    db.collection('listaEspera').where('fechaClase','>=',rsTs).where('fechaClase','<',reTs).get(),
+    db.collection('clientes').doc(uid).get(),
+    db.collection('horariosFijos').where('clienteId','==',uid).where('activo','==',true).get(),
+  ]);
+
+  const reservasByKey = {};    // horarioId|fecha → count total
+  const misReservas = {};      // horarioId|fecha → reservaId del user
+  reservasSnap.docs.forEach(d => {
+    const r = d.data();
+    const key = r.horarioId + '|' + _dateKey(r.fechaClase.toDate());
+    reservasByKey[key] = (reservasByKey[key] || 0) + 1;
+    if (r.clienteId === uid) misReservas[key] = d.id;
+  });
+
+  const esperaByKey = {};      // horarioId|fecha → count total
+  esperaAllSnap.docs.forEach(d => {
+    const e = d.data();
+    const key = e.horarioId + '|' + _dateKey(e.fechaClase.toDate());
+    esperaByKey[key] = (esperaByKey[key] || 0) + 1;
+  });
+
+  const fijosHorarioIds = new Set(fijosSnap.docs.map(d => d.data().horarioId));
+
+  const cliente = clienteDoc.exists ? clienteDoc.data() : null;
+  const vencDate = cliente && cliente.fechaVencimiento ? cliente.fechaVencimiento.toDate() : null;
+
+  const horariosOut = horarios.map(h => {
+    const diaNum = DIA_NUM[h.dia]; if (diaNum == null) return null;
+    const proximas = [];
+    for (let s = 0; s < semanas; s++) {
+      const t = new Date(hoy);
+      const diff = (diaNum - t.getDay() + 7) % 7;
+      t.setDate(t.getDate() + diff + s * 7);
+      const fecha = _dateKey(t);
+      const [hh, mm] = (h.hora || '00:00').split(':').map(Number);
+      const start = new Date(t); start.setHours(hh, mm, 0, 0);
+      const key = h.id + '|' + fecha;
+      proximas.push({
+        fecha,
+        disponibles: Math.max(0, (h.cuposTotales||0) - (reservasByKey[key]||0)),
+        tieneReserva: !!misReservas[key],
+        reservaId: misReservas[key] || null,
+        enEspera: esperaByKey[key] || 0,
+        postVencimiento: vencDate ? start.getTime() > vencDate.getTime() : false,
+        vencidoPlazo: ahora + minutosReserva*60*1000 > start.getTime(),
+        cerrado: diasCerrados.has(fecha),
+      });
+    }
+    return {...h, cupos_totales: h.cuposTotales, esFijo: fijosHorarioIds.has(h.id), proximas};
+  }).filter(Boolean);
+
+  let creditosInfo = null;
+  if (cliente) {
+    if (!cliente.tipoAbono) {
+      creditosInfo = { tipoAbono: 'NUEVA' };
+    } else {
+      const abono = _abonosCache.find(a => a.nombre === cliente.tipoAbono);
+      if (abono) {
+        const cs = Number(abono.clasesSemana || 0);
+        if (cs >= 999) creditosInfo = { tipoAbono: cliente.tipoAbono, ilimitado: true };
+        else creditosInfo = { tipoAbono: cliente.tipoAbono, ilimitado: false, creditosRestantes: Math.max(0, cs - (cliente.creditosUsadosSemana||0)) };
+      }
+    }
+  }
+
+  return { ok: true, horarios: horariosOut, creditosInfo };
+}
+
+// ── Traductor de códigos de error del backend a mensajes amigables ─────────
+const ERROR_MAP = {
+  no_credits: 'No te quedan cr\u00e9ditos esta semana',
+  class_full: 'La clase ya est\u00e1 completa',
+  abono_vencido: 'Tu abono est\u00e1 vencido. Renov\u00e1 para reservar.',
+  too_late: 'Ya pas\u00f3 el plazo para reservar o cancelar esta clase',
+  day_closed: 'El studio est\u00e1 cerrado ese d\u00eda',
+  already_reserved: 'Ya ten\u00e9s una reserva para esta clase',
+  already_waiting: 'Ya est\u00e1s en la lista de espera',
+  reserva_not_found: 'No encontramos esa reserva',
+  not_your_reserva: 'Esa reserva no es tuya',
+  already_cancelled: 'La reserva ya estaba cancelada',
+  client_inactive: 'Tu cuenta est\u00e1 inactiva. Contact\u00e1 al studio.',
+  client_not_found: 'No encontramos tu cuenta',
+  horario_not_found: 'Ese horario no existe',
+  horario_inactive: 'El horario est\u00e1 desactivado',
+  abono_not_found: 'No encontramos tu plan de abono. Contact\u00e1 al studio.',
+  config_not_found: 'Falta configuraci\u00f3n del sistema',
+  missing_params: 'Faltan datos',
+  missing_dni: 'Falta el DNI',
+  invalid_fechaClase: 'Fecha inv\u00e1lida',
+  dni_already_registered: 'Ese DNI ya est\u00e1 registrado. Iniciar sesi\u00f3n.',
+  email_already_registered: 'Ese email ya est\u00e1 registrado',
+  invalid_email: 'Email inv\u00e1lido',
+  password_too_short: 'La contrase\u00f1a tiene que tener al menos 6 caracteres',
+  auth_error: 'No pudimos crear la cuenta',
+  firestore_error: 'No pudimos guardar los datos. Prob\u00e1 de nuevo.',
+  network_error: 'Sin conexi\u00f3n. Prob\u00e1 de nuevo en un momento.',
+  not_authenticated: 'Ten\u00e9s que iniciar sesi\u00f3n',
+  nothing_to_update: 'No hay cambios para guardar',
+  empty_updates: 'No hay cambios para guardar',
+  invalid_token: 'Tu sesi\u00f3n expir\u00f3. Volv\u00e9 a iniciar sesi\u00f3n.',
+  requiere_relogin: 'Por seguridad, volv\u00e9 a iniciar sesi\u00f3n antes de cambiar la contrase\u00f1a',
+  email_pending: 'Todav\u00eda no completaste tu email. Contact\u00e1 al studio.',
+};
+function _friendly(body) {
+  if (body && body.ok === false && body.error && ERROR_MAP[body.error]) {
+    body.error = ERROR_MAP[body.error];
+  }
+  return body;
+}
+
+// ── Adaptador api() ─────────────────────────────────────────────────────────
+async function api(action, params = {}) {
+  // Login por password (DNI + contraseña)
+  if (action === 'loginConPassword') {
+    // Mensaje unificado para evitar user enumeration (ver bug report)
+    const GENERIC_ERR = { ok: false, error: 'DNI o contrase\u00f1a incorrectos' };
+    try {
+      const r = await fetch(CF_BASE + '/apiAuth/lookupEmailByDni', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ dni: params.dni }),
+      });
+      const lookup = await r.json();
+      if (!lookup.ok) return GENERIC_ERR;
+      const cred = await firebase.auth().signInWithEmailAndPassword(lookup.email, params.password);
+      const c = await _loadCliente(cred.user.uid);
+      if (!c) return GENERIC_ERR;
+      c.dni = c.dni || params.dni;
+      return { ok: true, cliente: c };
+    } catch (e) {
+      return GENERIC_ERR;
+    }
+  }
+
+  // Login por código email: no implementado en este MVP
+  if (action === 'loginCliente' || action === 'verificarCodigo') {
+    return { ok: false, error: 'Flujo de c\u00f3digo por email no disponible. Usa contrase\u00f1a o recupera la cuenta.' };
+  }
+
+  // Reset de password via email link (usamos sendPasswordResetEmail de Firebase)
+  if (action === 'resetPasswordConfirm') {
+    try {
+      await firebase.auth().confirmPasswordReset(params.token, params.nuevaPassword);
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: 'Link expirado o inv\u00e1lido' };
+    }
+  }
+
+  // Set/cambiar password del user logueado
+  if (action === 'setPassword') {
+    const u = firebase.auth().currentUser;
+    if (!u) return { ok: false, error: 'not_authenticated' };
+    try { await u.updatePassword(params.password); return { ok: true }; }
+    catch (e) { return { ok: false, error: 'requiere_relogin' }; }
+  }
+
+  // Perfil: leer desde Firestore directamente
+  if (action === 'getClientePerfil') {
+    const u = firebase.auth().currentUser;
+    if (!u) return { ok: false, error: 'not_authenticated' };
+    const c = await _loadCliente(u.uid);
+    if (!c) return { ok: false, error: 'not_found' };
+    return { ok: true, cliente: c };
+  }
+
+  // Horarios: cálculo client-side
+  if (action === 'getHorarios') {
+    return _computeHorarios();
+  }
+
+  // Mis reservas: query directa
+  if (action === 'getMisReservas') {
+    const u = firebase.auth().currentUser;
+    if (!u) return { ok: false, error: 'not_authenticated' };
+    const db = firebase.firestore();
+    const snap = await db.collection('reservas')
+      .where('clienteId','==', u.uid)
+      .orderBy('fechaClase','desc')
+      .limit(100)
+      .get();
+    const horariosSnap = await db.collection('horarios').get();
+    const horariosById = {};
+    horariosSnap.docs.forEach(d => { horariosById[d.id] = d.data(); });
+    const reservas = snap.docs.map(d => {
+      const r = _dsObject({ id: d.id, ...d.data() });
+      const h = horariosById[r.horarioId];
+      if (h) r.horario = { dia: h.dia, hora: h.hora, instructor: h.instructor };
+      return r;
+    });
+    return { ok: true, reservas };
+  }
+
+  // CFs: reservar, cancelar, anotarseEspera, editarPerfil, registrarCliente
+  const u = firebase.auth().currentUser;
+
+  if (action === 'registrarCliente') {
+    // El frontend pasa parq como JSON string; lo parseamos
+    let parq = params.parq;
+    if (typeof parq === 'string') { try { parq = JSON.parse(parq); } catch {} }
+    // Normalizar keys snake_case del parq a camelCase
+    const parqNorm = {};
+    if (parq && typeof parq === 'object') {
+      for (const [k, v] of Object.entries(parq)) {
+        const camel = k.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
+        parqNorm[camel] = v;
+      }
+    }
+    const body = {
+      nombre: params.nombre,
+      dni: params.dni,
+      email: params.email,
+      password: params.password || Math.random().toString(36).slice(-8) + 'Aa1',
+      telefono: params.telefono,
+      parq: parqNorm,
+    };
+    const r = await fetch(CF_BASE + '/apiAuth/registrar', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body),
+    });
+    const resp = _friendly(await r.json());
+    if (resp.ok) {
+      // Login automático: si tenía password, usarla
+      if (params.password) {
+        try { await firebase.auth().signInWithEmailAndPassword(params.email, params.password); } catch {}
+      }
+      const c = firebase.auth().currentUser ? await _loadCliente(firebase.auth().currentUser.uid) : null;
+      return { ok: true, cliente: c || { id: resp.clienteId, nombre: params.nombre, dni: params.dni, email: params.email, telefono: params.telefono } };
+    }
+    return resp;
+  }
+
+  if (!u) return { ok: false, error: 'not_authenticated' };
+  const idToken = await u.getIdToken();
+
+  let url, body;
+  if (action === 'editarPerfil') {
+    url = CF_BASE + '/apiClientes/editarPerfil';
+    body = { nombre: params.nombre, telefono: params.telefono };
+  } else if (action === 'reservarTurno') {
+    url = CF_BASE + '/apiReservas/reservar';
+    body = { horarioId: params.horarioId, fechaClase: params.fechaClase };
+  } else if (action === 'cancelarReserva') {
+    url = CF_BASE + '/apiReservas/cancelar';
+    body = { reservaId: params.reservaId };
+  } else if (action === 'anotarseEspera') {
+    url = CF_BASE + '/apiReservas/anotarseEspera';
+    body = { horarioId: params.horarioId, fechaClase: params.fechaClase };
+  } else {
+    console.error('Acci\u00f3n no mapeada:', action);
+    return { ok: false, error: 'action_not_mapped' };
+  }
+
+  try {
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization': 'Bearer ' + idToken },
+      body: JSON.stringify(body),
+    });
+    return _friendly(await r.json());
+  } catch (e) {
+    return { ok: false, error: ERROR_MAP.network_error, message: e.message };
+  }
+}
+
+// ── Biométrico cliente (preservado, adaptado a Firebase) ────────────────────
 function bioClienteDisponible() { return !!(window.PublicKeyCredential && navigator.credentials); }
 
 async function registrarBioCliente() {
@@ -668,60 +1046,61 @@ async function loginBioCliente() {
     var bytes = new Uint8Array(bin.length);
     for (var i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
     var cred = await navigator.credentials.get({publicKey:{
-      challenge: ch,
-      rpId: location.hostname,
+      challenge: ch, rpId: location.hostname,
       allowCredentials: [{id:bytes.buffer, type:'public-key'}],
-      userVerification: 'required',
-      timeout: 60000
+      userVerification: 'required', timeout: 60000
     }});
     if (!cred) return;
-    // Bio OK -> hacer login real con el GAS usando el clienteId guardado
-    showMsg('login-msg', 'Verificando...', '');
-    var res = await api('getClientePerfil', {clienteId: bioUid});
-    if (res.ok && res.cliente) {
-      _loginExitoso(res.cliente);
+    // Biometric OK: verificamos si Firebase tiene sesión persistida del mismo uid
+    var fbUser = firebase.auth().currentUser;
+    if (fbUser && fbUser.uid === bioUid) {
+      var c = await _loadCliente(fbUser.uid);
+      if (c) _loginExitoso(c);
+      else if (errEl) errEl.innerHTML = '<div class="msg error">No se pudo cargar tu perfil.</div>';
     } else {
-      // Si falla, limpiar bio y pedir login normal
-      if (errEl) errEl.innerHTML = '<div class="msg error">No se pudo verificar tu cuenta. Ingresa con DNI.</div>';
+      if (errEl) errEl.innerHTML = '<div class="msg error">Sesi\u00f3n expirada. Ingres\u00e1 con DNI y contrase\u00f1a.</div>';
       localStorage.removeItem('spl_bio_id');
       localStorage.removeItem('spl_bio_uid');
-      document.getElementById('login-bio-wrap').style.display = 'none';
+      var bw = document.getElementById('login-bio-wrap'); if (bw) bw.style.display = 'none';
     }
   } catch(e) {
-    // Usuario cancelo - no mostrar error
     console.log('Bio cancelado:', e.message);
-    showMsg('login-msg', '', '');
+    if (typeof showMsg === 'function') showMsg('login-msg', '', '');
   }
 }
-// == FIN BIOMETRICO CLIENTE =================================================
+
+// ── Boot: Firebase Auth state ↔ usuario/localStorage ───────────────────────
+firebase.auth().onAuthStateChanged(async (fbUser) => {
+  if (fbUser) {
+    const c = await _loadCliente(fbUser.uid);
+    if (c) {
+      usuario = c;
+      localStorage.setItem('spl_user', JSON.stringify(usuario));
+    }
+  } else {
+    usuario = null;
+    localStorage.removeItem('spl_user');
+  }
+  if (typeof actualizarUI === 'function') actualizarUI();
+  if (typeof cargarHorarios === 'function') cargarHorarios();
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   actualizarUI();
-  cargarHorarios();
-  // Mostrar boton bio si esta registrado
   if (localStorage.getItem('spl_bio_id')) {
     var bw = document.getElementById('login-bio-wrap');
     if (bw) bw.style.display = 'block';
   }
-  // Detectar link de reset de contrasena
   const params = new URLSearchParams(window.location.search);
-  const token = params.get('reset_token');
+  const token = params.get('reset_token') || params.get('oobCode');
   const email = params.get('email');
-  if (token && email) {
+  if (token) {
     _resetToken = token;
     _resetEmail = email;
     abrirModal('modal-reset');
     window.history.replaceState({}, document.title, window.location.pathname);
   }
 });
-
-async function api(action, params = {}) {
-  const url = new URL(API_URL);
-  url.searchParams.set('action', action);
-  Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
-  const res = await fetch(url);
-  return res.json();
-}
 
 function actualizarBannerCreditos(info) {
   var banner = document.getElementById('creditos-banner');
@@ -734,7 +1113,7 @@ function actualizarBannerCreditos(info) {
   } else {
     var rest = info.creditosRestantes !== undefined ? info.creditosRestantes : '-';
     var color = rest===0?'#c0392b':rest<=1?'#c9a96e':'#6b8f71';
-    banner.innerHTML = '<span class="cr-plan">'+info.tipoAbono+'</span><span class="cr-val" style="color:'+color+'">'+rest+' credito'+(rest!==1?'s':'')+' esta semana</span>';
+    banner.innerHTML = '<span class="cr-plan">'+info.tipoAbono+'</span><span class="cr-val" style="color:'+color+'">'+rest+' cr\u00e9dito'+(rest!==1?'s':'')+' esta semana</span>';
   }
   banner.style.display = 'flex';
 }
@@ -765,13 +1144,16 @@ document.addEventListener('click', function(e) {
   if (menu && !menu.contains(e.target)) closeUserMenu();
 });
 
-function logout() { localStorage.removeItem('spl_user'); usuario=null; actualizarUI(); cargarHorarios(); }
+async function logout() {
+  try { await firebase.auth().signOut(); } catch {}
+  // onAuthStateChanged limpia usuario y refresca UI
+}
 
 // Nuevo flujo unificado: DNI + password opcional en un solo paso
 async function doLoginFlexible() {
   var dni = document.getElementById('login-dni').value.trim().replace(/\D/g,'');
   var password = document.getElementById('login-password').value;
-  if (!dni) return showMsg('login-msg','Ingresa tu DNI','error');
+  if (!dni) return showMsg('login-msg','Ingres\u00e1 tu DNI','error');
   showMsg('login-msg','Verificando...','');
 
   if (password) {
@@ -799,14 +1181,31 @@ async function doLoginFlexible() {
 
 async function olvideMiPasswordDesdeS1() {
   var dni = document.getElementById('login-dni').value.trim().replace(/\D/g,'');
-  if (!dni) return showMsg('login-msg','Ingresa tu DNI primero','error');
-  window._loginDni = dni;
-  var res = await api('loginCliente', {dni: dni});
-  if (res.ok) {
+  if (!dni) return showMsg('login-msg','Ingres\u00e1 tu DNI primero','error');
+  showMsg('login-msg','Enviando...','');
+  const GENERIC = 'Si el DNI est\u00e1 registrado, te enviamos un email con el link de reset.';
+  try {
+    // 1. Email por DNI
+    const r = await fetch(CF_BASE + '/apiAuth/lookupEmailByDni', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ dni }),
+    });
+    const lookup = await r.json();
+    if (!lookup.ok) {
+      // Silenciamos errores para no filtrar qué DNIs existen (user enumeration)
+      document.getElementById('login-s1').style.display='none';
+      document.getElementById('login-s3').style.display='block';
+      return;
+    }
+    // 2. Reset nativo de Firebase
+    await firebase.auth().sendPasswordResetEmail(lookup.email);
     document.getElementById('login-s1').style.display='none';
     document.getElementById('login-s3').style.display='block';
-  } else {
-    showMsg('login-msg', res.error || 'No se encontro el DNI', 'error');
+  } catch (e) {
+    // No revelar detalle en error
+    console.warn('sendPasswordResetEmail:', e.message);
+    document.getElementById('login-s1').style.display='none';
+    document.getElementById('login-s3').style.display='block';
   }
 }
 
@@ -828,8 +1227,8 @@ function _loginExitoso(cliente) {
   cargarHorarios();
   // Ofrecer bio si disponible y no registrado
   if (bioClienteDisponible() && !localStorage.getItem('spl_bio_id')) {
-    setTimeout(function(){
-      if (confirm('Activar huella o Face ID para entrar mas rapido la proxima vez?')) registrarBioCliente();
+    setTimeout(async function(){
+      if (await uiConfirm('\u00bfActivar huella o Face ID para entrar m\u00e1s r\u00e1pido la pr\u00f3xima vez?', {title:'Biom\u00e9trico', okText:'Activar'})) registrarBioCliente();
     }, 800);
   }
 }
@@ -837,7 +1236,7 @@ function _loginExitoso(cliente) {
 async function doLoginConPassword() {
   var dni = window._loginDni || document.getElementById('login-dni').value.trim().replace(/\D/g,'');
   var password = document.getElementById('login-password').value;
-  if (!password) return showMsg('login-msg','Ingresa tu contrasena','error');
+  if (!password) return showMsg('login-msg','Ingres\u00e1 tu contrase\u00f1a','error');
   showMsg('login-msg','Verificando...','');
   var res = await api('loginConPassword', {dni: dni, password: password});
   if (res.ok) { _loginExitoso(res.cliente); }
@@ -860,19 +1259,21 @@ async function usarCodigo() {
 }
 
 async function olvideMiPassword() {
-  // Para reset usamos el email del cliente (que ya tenemos del checkDni)
-  // Primero obtenemos el email del cliente por DNI
   const dni = window._loginDni;
   if (!dni) return;
   document.getElementById('login-s2a').style.display='none';
-  // El cliente tiene email guardado, enviamos reset
-  const res = await api('loginCliente', {dni}); // reutilizamos para obtener email
-  if (res.ok) {
-    document.getElementById('login-s3').style.display='block';
-  } else {
-    document.getElementById('login-s2a').style.display='block';
-    showMsg('login-msg2a', 'No se pudo enviar el reset. Contacta al studio.', 'error');
+  try {
+    const r = await fetch(CF_BASE + '/apiAuth/lookupEmailByDni', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ dni }),
+    });
+    const lookup = await r.json();
+    if (lookup.ok) await firebase.auth().sendPasswordResetEmail(lookup.email);
+  } catch (e) {
+    console.warn('sendPasswordResetEmail:', e.message);
   }
+  // Mostramos el estado de "email enviado" incluso si falló (no revelar DNIs válidos)
+  document.getElementById('login-s3').style.display='block';
 }
 
 function volverLoginDni() {
@@ -915,7 +1316,7 @@ async function guardarMisDatos() {
   const email = document.getElementById('md-email').value.trim();
   const telefono = document.getElementById('md-telefono').value.trim();
   if (!nombre) return showMsg('mis-datos-msg','El nombre es obligatorio','error');
-  if (!email || !email.includes('@')) return showMsg('mis-datos-msg','Email invalido','error');
+  if (!email || !email.includes('@')) return showMsg('mis-datos-msg','Email inv\u00e1lido','error');
   showMsg('mis-datos-msg','Guardando...','');
   const res = await api('editarPerfil', {clienteId: usuario.id, nombre, email, telefono});
   if (res.ok) {
@@ -960,7 +1361,7 @@ async function confirmarReset() {
   const pass2 = document.getElementById('reset-pass2').value;
   if (!pass1 || pass1.length < 6) return showMsg('reset-msg','La contrasena debe tener al menos 6 caracteres','error');
   if (pass1 !== pass2) return showMsg('reset-msg','Las contrasenas no coinciden','error');
-  if (!_resetToken || !_resetEmail) return showMsg('reset-msg','Link invalido, solicita uno nuevo','error');
+  if (!_resetToken || !_resetEmail) return showMsg('reset-msg','Link inv\u00e1lido, solicitá uno nuevo','error');
   showMsg('reset-msg','Guardando...','');
   const res = await api('resetPasswordConfirm', {
     email: _resetEmail,
@@ -980,6 +1381,7 @@ async function registrarse() {
   const nombre  = document.getElementById('reg-nombre').value.trim();
   const dni     = document.getElementById('reg-dni').value.trim().replace(/\D/g,'');
   const email   = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value;
   const tel     = document.getElementById('reg-tel').value.trim();
   const edad    = document.getElementById('reg-edad').value.trim();
   const fnac    = document.getElementById('reg-fnac').value;
@@ -989,10 +1391,11 @@ async function registrarse() {
   if (!nombre) return showMsg('reg-msg','El nombre es requerido','error');
   if (!dni || dni.length < 7) return showMsg('reg-msg','Ingresa tu DNI (sin puntos ni espacios)','error');
   if (!email) return showMsg('reg-msg','El email es requerido','error');
-  if (!tel) return showMsg('reg-msg','El telefono es requerido','error');
+  if (!password || password.length < 6) return showMsg('reg-msg','La contrase\u00f1a tiene que tener al menos 6 caracteres','error');
+  if (!tel) return showMsg('reg-msg','El tel\u00e9fono es requerido','error');
   if (!edad) return showMsg('reg-msg','La edad es requerida','error');
   if (!fnac) return showMsg('reg-msg','La fecha de nacimiento es requerida','error');
-  if (!acepta) return showMsg('reg-msg','Debes aceptar la declaracion para continuar','error');
+  if (!acepta) return showMsg('reg-msg','Deb\u00e9s aceptar la declaraci\u00f3n para continuar','error');
 
   // Validar PAR-Q (todos los obligatorios)
   const parqCampos = ['parq1','parq2','parq3','parq4','parq5','parq6'];
@@ -1003,7 +1406,7 @@ async function registrarse() {
 
   // Lesiones - al menos una opcion
   const lesiones = [...document.querySelectorAll('input[name="lesion"]:checked')].map(i=>i.value);
-  if (!lesiones.length) return showMsg('reg-msg','Indica si tuviste alguna lesion en los ultimos 6 meses','error');
+  if (!lesiones.length) return showMsg('reg-msg','Indic\u00e1 si tuviste alguna lesi\u00f3n en los \u00faltimos 6 meses','error');
 
   // Recopilar patologias
   const patologias = [...document.querySelectorAll('input[name="patologia"]:checked')].map(i => {
@@ -1033,7 +1436,7 @@ async function registrarse() {
   };
 
   showMsg('reg-msg','Registrando...','');
-  const res = await api('registrarCliente', { nombre, dni, email, telefono: tel, parq: JSON.stringify(parq) });
+  const res = await api('registrarCliente', { nombre, dni, email, password, telefono: tel, parq: JSON.stringify(parq) });
   if (res.ok) {
     showMsg('reg-msg','!Cuenta creada! Revisa tu email.','success');
     usuario = res.cliente;
@@ -1088,7 +1491,19 @@ function renderHorarios() {
   const grid = document.getElementById('clases-grid');
   const filtrados = filtroActivo==='todos' ? horariosData : horariosData.filter(h=>h.dia===filtroActivo);
   if (!filtrados.length) { grid.innerHTML='<div class="empty-state"><div class="empty-icon">&#129496;</div><p>No hay clases disponibles</p></div>'; return; }
-  grid.innerHTML = filtrados.map(h=>renderCard(h)).join('');
+
+  // Banner único si hay fechas post-vencimiento en cualquier horario
+  let vencBanner = '';
+  if (usuario && usuario.fechaVencimiento) {
+    const hayPostVenc = filtrados.some(h => (h.proximas||[]).some(p => p.postVencimiento));
+    if (hayPostVenc) {
+      const d = new Date(usuario.fechaVencimiento + 'T00:00:00');
+      const fechaStr = d.getDate() + ' de ' + MESES[d.getMonth()];
+      vencBanner = '<div style="grid-column:1/-1;padding:10px 14px;background:#f8ede0;border:1px solid #e8d5b0;color:#8b6a3a;font-size:12px;margin-bottom:4px;border-radius:2px"><strong>Tu abono vence el ' + fechaStr + '.</strong> Las fechas marcadas con <span style="color:#c09060">*</span> caen despu&eacute;s de esa fecha &mdash; renov&aacute; el abono para reservarlas.</div>';
+    }
+  }
+
+  grid.innerHTML = vencBanner + filtrados.map(h=>renderCard(h)).join('');
 }
 
 function renderCard(h) {
@@ -1117,7 +1532,7 @@ function renderCard(h) {
       const labelFijo = esFijo ? ' &#128204; Horario fijo' : '';
       btn = `<div style="display:flex;gap:8px">
         <button class="btn-reservar" style="background:var(--success,#5a8a6a);flex:1;cursor:default">&#10003; Reservado${labelFijo}</button>
-        <button class="btn-reservar" style="background:none;border:1px solid var(--muted);color:var(--muted);width:auto;padding:13px 16px" onclick="accionCancelar('${reservaId}')">&#10005;</button>
+        <button class="btn-reservar" style="background:none;border:1px solid var(--muted);color:var(--muted);width:auto;padding:13px 16px" onclick="accionCancelar('${reservaId}','${selF}','${h.hora}','${h.instructor}')">&#10005;</button>
       </div>`;
     } else if (postVenc) {
       // Fecha cae despues del vencimiento del abono
@@ -1134,7 +1549,6 @@ function renderCard(h) {
   }
 
   const fijoTag = esFijo ? '<span style="font-size:9px;letter-spacing:1.5px;color:var(--gold);text-transform:uppercase;display:block;margin-bottom:4px">&#128204; Horario fijo</span>' : '';
-  const vencTag = proximas.some(p=>p.postVencimiento) ? '<div style="font-size:10px;color:#c09060;margin-bottom:6px">* Fecha fuera de tu abono actual</div>' : '';
 
   return `<div class="clase-card">
     ${fijoTag}
@@ -1144,10 +1558,9 @@ function renderCard(h) {
     ${h.descripcion?`<div class="clase-desc">${h.descripcion}</div>`:''}
     <span class="fecha-label">Elegi tu fecha</span>
     <div class="fecha-tabs">${tabs}</div>
-    ${vencTag}
     <div class="cupos-bar">
       <div class="cupos-track"><div class="cupos-fill ${lleno?'lleno':''}" style="width:${pct}%"></div></div>
-      <span class="cupos-text">${lleno?'Completo':`${disp} lugar${disp!==1?'es':''}`}</span>
+      <span class="cupos-text">${lleno?'Completo':`${disp} de ${h.cupos_totales} lugar${h.cupos_totales!==1?'es':''} disponible${disp!==1?'s':''}`}</span>
     </div>
     ${btn}
   </div>`;
@@ -1165,18 +1578,24 @@ function avisarVencimiento() {
     <div style="text-align:center;padding:8px 0">
       <div style="font-size:32px;margin-bottom:12px">&#9888;&#65039;</div>
       <p style="font-size:14px;color:var(--dark);margin-bottom:8px">Tu abono vence el <strong>${fechaStr}</strong>.</p>
-      <p style="font-size:13px;color:var(--muted);line-height:1.6">Para reservar clases en esa fecha necesitas renovar tu abono.<br>Contacta al studio para regularizar tu situacion.</p>
+      <p style="font-size:13px;color:var(--muted);line-height:1.6">Para reservar clases en esa fecha necesit&#225;s renovar tu abono.<br>Contact&#225; al studio para regularizar tu situaci&#243;n.</p>
     </div>`;
   const btn = document.getElementById('conf-btn');
   btn.textContent = 'Cerrar';
   btn.disabled = false;
   btn.onclick = function(){ cerrarModal('modal-confirmar'); };
   document.getElementById('conf-msg').innerHTML = '';
+  // Ocultar botón "Cancelar" redundante (solo hay una acción: cerrar)
+  const cancelBtn = document.getElementById('conf-btn-cancel');
+  if (cancelBtn) cancelBtn.style.display = 'none';
   accionPendiente = null;
   abrirModal('modal-confirmar');
 }
 
 function accionReservar(horarioId, fecha, hora, instructor) {
+  // Asegurar que el botón cancelar esté visible (reservar → sí tiene sentido cancelar)
+  const cancelBtn = document.getElementById('conf-btn-cancel');
+  if (cancelBtn) cancelBtn.style.display = '';
   const d=new Date(fecha+'T00:00:00');
   document.getElementById('conf-titulo').textContent='Confirmar reserva';
   document.getElementById('conf-detalle').innerHTML=`
@@ -1193,6 +1612,8 @@ function accionReservar(horarioId, fecha, hora, instructor) {
 }
 
 function accionEspera(horarioId, fecha) {
+  const cancelBtn = document.getElementById('conf-btn-cancel');
+  if (cancelBtn) cancelBtn.style.display = '';
   document.getElementById('conf-titulo').textContent='Lista de espera';
   document.getElementById('conf-detalle').innerHTML='<p style="font-size:13px;color:var(--muted)">La clase esta completa. Te avisaremos por email si se libera un cupo.</p>';
   const btn=document.getElementById('conf-btn');
@@ -1201,6 +1622,26 @@ function accionEspera(horarioId, fecha) {
   btn.onclick=ejecutarAccion;
   document.getElementById('conf-msg').innerHTML='';
   accionPendiente={tipo:'espera',horarioId,fecha};
+  abrirModal('modal-confirmar');
+}
+
+function accionCancelar(reservaId, fecha, hora, instructor) {
+  const cancelBtn = document.getElementById('conf-btn-cancel');
+  if (cancelBtn) cancelBtn.style.display = '';
+  const d = fecha ? new Date(fecha+'T00:00:00') : null;
+  document.getElementById('conf-titulo').textContent='Cancelar reserva';
+  document.getElementById('conf-detalle').innerHTML = d
+    ? `<p style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Detalle</p>
+       <p style="font-size:18px;color:var(--dark);margin-bottom:4px">${DIAS[d.getDay()]} ${hora||''}</p>
+       <p style="font-size:13px;color:var(--muted)">${d.getDate()} de ${MESES[d.getMonth()]}${instructor?' &#183; '+instructor:''}</p>
+       <p style="font-size:13px;color:var(--muted);margin-top:10px">&#191;Segura que quer&#233;s cancelar esta reserva?</p>`
+    : '<p style="font-size:14px;color:var(--muted);padding:8px 0">&#191;Segura que quer&#233;s cancelar esta reserva?</p>';
+  const btn=document.getElementById('conf-btn');
+  btn.textContent='S\u00ed, cancelar';
+  btn.disabled=false;
+  btn.onclick=ejecutarAccion;
+  document.getElementById('conf-msg').innerHTML='';
+  accionPendiente={tipo:'cancelar',reservaId};
   abrirModal('modal-confirmar');
 }
 
@@ -1222,14 +1663,13 @@ async function ejecutarAccion() {
         localStorage.setItem('spl_user', JSON.stringify(usuario));
         actualizarBannerCreditos({ tipoAbono: usuario.tipoAbono, creditosRestantes: res.creditosRestantes, ilimitado: res.creditosRestantes >= 999 });
       }
-      // Recargar horarios para actualizar cupos y cerrar modal automaticamente
       await cargarHorarios();
       setTimeout(function(){ cerrarModal('modal-confirmar'); }, 1500);
     } else {
       showMsg('conf-msg', res.error || 'Error al reservar', 'error');
       btn.disabled=false; btn.textContent='Reintentar';
     }
-  } else {
+  } else if (accionPendiente.tipo==='espera') {
     res=await api('anotarseEspera',{clienteId:usuario.id,horarioId:accionPendiente.horarioId,fechaClase:accionPendiente.fecha});
     if (res.ok) {
       showMsg('conf-msg',`&#10003; Estas en posicion #${res.posicion}. Te avisaremos si hay cupo.`,'success');
@@ -1241,6 +1681,24 @@ async function ejecutarAccion() {
       setTimeout(function(){ cerrarModal('modal-confirmar'); }, 1500);
     } else {
       showMsg('conf-msg',res.error,'error');
+      btn.disabled=false; btn.textContent='Reintentar';
+    }
+  } else if (accionPendiente.tipo==='cancelar') {
+    res=await api('cancelarReserva',{reservaId:accionPendiente.reservaId,clienteId:usuario.id});
+    if (res.ok) {
+      showMsg('conf-msg', res.refunded ? '&#10003; Reserva cancelada. Te devolvimos el cr\u00e9dito.' : '&#10003; Reserva cancelada.', 'success');
+      accionPendiente = null;
+      btn.textContent='Cerrar';
+      btn.disabled=false;
+      btn.onclick=function(){ cerrarModal('modal-confirmar'); };
+      await cargarHorarios();
+      // Si el modal de mis-reservas está abierto, refrescar
+      if (document.getElementById('modal-mis-reservas')?.classList.contains('open')) {
+        abrirMisReservas();
+      }
+      setTimeout(function(){ cerrarModal('modal-confirmar'); }, 1500);
+    } else {
+      showMsg('conf-msg', res.error || 'Error al cancelar', 'error');
       btn.disabled=false; btn.textContent='Reintentar';
     }
   }
@@ -1257,6 +1715,7 @@ async function abrirMisReservas() {
   document.getElementById('cal-grid').style.display = 'none';
 
   const res = await api('getMisReservas', {clienteId: usuario.id});
+  window._misReservasCache = res.ok ? res.reservas : [];
   if (!res.ok || !res.reservas.length) {
     c.innerHTML = '<div class="empty-state"><div class="empty-icon">&#128197;</div><p>No tenes reservas proximas</p></div>';
     return;
@@ -1294,9 +1753,10 @@ function renderCalendario() {
 
   document.getElementById('cal-titulo').textContent = `${MESES_L[mes]} ${ano}`;
 
-  // Fechas reservadas de este mes
+  // Fechas reservadas de este mes (solo activas — canceladas/vencidas no se marcan)
   const reservadasMes = new Set(
     _misReservas
+      .filter(r => r.estado === 'activa')
       .filter(r => { const d = new Date(r.fecha_clase+'T00:00:00'); return d.getMonth()===mes && d.getFullYear()===ano; })
       .map(r => r.fecha_clase)
   );
@@ -1376,19 +1836,21 @@ function renderListaReservas() {
         <div class="r-inst">${h ? h.instructor : ''}</div>
       </div>
       ${r.estado==='activa'
-        ? `<button class="btn-cancelar" onclick="cancelarReserva('${r.id}')">Cancelar</button>`
-        : '<span style="font-size:11px;color:var(--muted)">Cancelada</span>'}
+        ? `<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end"><span style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--success,#5a8a6a)">Activa</span><button class="btn-cancelar" onclick="cancelarReserva('${r.id}')">Cancelar</button></div>`
+        : `<span style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted)">${r.estado==='vencida'?'Vencida':'Cancelada'}</span>`}
     </div>`;
   });
 
   c.innerHTML = htmlPorMes;
 }
 
-async function cancelarReserva(reservaId) {
-  if (!confirm('?Segura que queres cancelar esta reserva?')) return;
-  const res=await api('cancelarReserva',{reservaId,clienteId:usuario.id});
-  if (res.ok) { abrirMisReservas(); cargarHorarios(); }
-  else alert(res.error);
+function cancelarReserva(reservaId) {
+  // Buscar datos de la reserva para mostrar detalle en el modal
+  const r = (window._misReservasCache || []).find(x => x.id === reservaId);
+  const fecha = r ? (r.fechaClase || r.fecha_clase) : null;
+  const hora = r?.horario?.hora;
+  const instructor = r?.horario?.instructor;
+  accionCancelar(reservaId, fecha, hora, instructor);
 }
 
 function abrirModal(id) { document.getElementById(id).classList.add('open'); }
@@ -1534,7 +1996,7 @@ document.querySelectorAll('.modal-overlay').forEach(o=>{
 </div>
 
 <!-- VERSION BADGE -->
-<div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.7</div>
+<div style="position:fixed;bottom:12px;right:12px;z-index:800;font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;background:rgba(0,0,0,0.45);padding:4px 8px;border-radius:3px;pointer-events:none;user-select:none">v1.0</div>
 
 <div id="reg-toast"></div>
 
@@ -1543,6 +2005,55 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('sw.js').catch(function(){});
   });
+}
+</script>
+
+<!-- Modal genérico de confirmación / aviso (reemplaza confirm/alert nativos) -->
+<div class="modal-overlay" id="modal-ui-dialog">
+  <div class="modal" style="max-width:440px">
+    <h2 class="modal-title" id="ui-dialog-title">Confirmar</h2>
+    <div id="ui-dialog-msg" style="font-size:14px;color:var(--muted);line-height:1.6;margin:8px 0 18px;white-space:pre-line"></div>
+    <div class="modal-btns">
+      <button class="btn-secondary" id="ui-dialog-cancel" onclick="_uiDialogClose(false)">Cancelar</button>
+      <button class="btn-primary" id="ui-dialog-ok" onclick="_uiDialogClose(true)">Aceptar</button>
+    </div>
+  </div>
+</div>
+<script>
+let _uiDialogResolve = null;
+function _uiDialogClose(result) {
+  document.getElementById('modal-ui-dialog').classList.remove('open');
+  if (_uiDialogResolve) { const r = _uiDialogResolve; _uiDialogResolve = null; r(result); }
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Escape') return;
+  // Prioridad: modal de ui-dialog (si está abierto, cerrar ese)
+  const dlg = document.getElementById('modal-ui-dialog');
+  if (dlg && dlg.classList.contains('open')) { _uiDialogClose(false); return; }
+  // Cerrar el último modal-overlay abierto
+  const abiertos = document.querySelectorAll('.modal-overlay.open');
+  if (abiertos.length) abiertos[abiertos.length - 1].classList.remove('open');
+});
+function uiConfirm(message, opts) {
+  opts = opts || {};
+  document.getElementById('ui-dialog-title').textContent = opts.title || 'Confirmar';
+  document.getElementById('ui-dialog-msg').textContent = message || '';
+  const okBtn = document.getElementById('ui-dialog-ok');
+  const cancelBtn = document.getElementById('ui-dialog-cancel');
+  okBtn.textContent = opts.okText || 'Aceptar';
+  cancelBtn.textContent = opts.cancelText || 'Cancelar';
+  cancelBtn.style.display = '';
+  document.getElementById('modal-ui-dialog').classList.add('open');
+  return new Promise((resolve) => { _uiDialogResolve = resolve; });
+}
+function uiAlert(message, opts) {
+  opts = opts || {};
+  document.getElementById('ui-dialog-title').textContent = opts.title || 'Aviso';
+  document.getElementById('ui-dialog-msg').textContent = message || '';
+  document.getElementById('ui-dialog-ok').textContent = opts.okText || 'OK';
+  document.getElementById('ui-dialog-cancel').style.display = 'none';
+  document.getElementById('modal-ui-dialog').classList.add('open');
+  return new Promise((resolve) => { _uiDialogResolve = resolve; });
 }
 </script>
 </body>
